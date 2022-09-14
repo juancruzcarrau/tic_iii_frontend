@@ -40,9 +40,8 @@ const Login = () => {
     }, [])
 
     const test = (data) => {
-        console.log(sessionStorage.getItem('hello'))
+        console.log(data)
         AuthenticationService.authenticate({})
-        console.log(sessionStorage.getItem('hello'))
     }
 
     return (

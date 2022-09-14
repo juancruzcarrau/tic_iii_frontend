@@ -1,9 +1,7 @@
-import {Box, Paper, useTheme} from "@mui/material";
+import {Box, Paper} from "@mui/material";
 import Login from "./Login";
 
 const LoginPage = () => {
-
-    const theme = useTheme()
 
     const styles = {
         paper: {
