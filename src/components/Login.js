@@ -89,6 +89,49 @@ const Login = () => {
                     </Button>
                 </div>
             </form>
+
+
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Sign up</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Please, write down the requested information.
+                  </DialogContentText>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Email Address"
+                    type="email"
+                    fullWidth
+                    variant="outlined"
+                 />
+                 <TextField
+                    autoFocus
+                    margin="dense"
+                    id="password1"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    variant="outlined"
+                 />
+                 <TextField
+                    autoFocus
+                    margin="dense"
+                    id="password2"
+                    label="Repeat Password"
+                    type="password"
+                    fullWidth
+                    variant="outlined"
+                 />
+                 </DialogContent>
+                    <DialogActions>
+                      <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+                      <Button variant="contained" onClick={handleClose}>Register</Button>
+                 </DialogActions>
+             </Dialog>
+
         </div>
     )
 }
