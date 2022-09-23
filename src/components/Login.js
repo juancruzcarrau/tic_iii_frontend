@@ -1,10 +1,10 @@
-import {useRef, useState, useEffect, useContext} from "react";
+import {useRef, useState, useEffect} from "react";
 import {Alert, Button, Collapse, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
 import AuthenticationService from "../services/AuthentictionService";
-import {useDispatch, useSelector} from "react-redux";
-import {isAuthenticated, setUser} from "../userSlice";
+import {useDispatch} from "react-redux";
+import {setUser} from "../userSlice";
 import {useNavigate} from "react-router-dom";
 
 const Login = () => {
@@ -25,18 +25,12 @@ const Login = () => {
         }
     }
 
-    //FormHook
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const emailRef = useRef()
-    const errRef = useRef()
-
     const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false);
 
     const dispatch =useDispatch();
-
-    const [userData, setUserData] = useState({})
 
     useEffect(() => {
         emailRef.current.focus();
@@ -48,10 +42,21 @@ const Login = () => {
 
 
     const test = (data) => {
-        AuthenticationService.authenticate(data).then(res => {
-            dispatch(setUser(res))
-            navigate('/home')
-        });
+
+        setErrMsg("");
+
+        AuthenticationService.authenticate(data)
+            .then(res => {
+                dispatch(setUser(res))
+                navigate('/home')})
+            .catch(error => {
+                if (error.request.status === 401) {
+                    setErrMsg("Email o contraseña incorrecta.")
+                } else {
+                    setErrMsg("Ha ocurrido un error inesperado.")
+                    console.log(error)
+                }
+            });
     }
     const navigate = useNavigate();
 
@@ -63,7 +68,7 @@ const Login = () => {
             <h1 style={{fontFamily: "Montserrat"}}>Welcome to Thorus</h1>
 
             <Collapse in={errMsg.length !== 0} sx={styles.alert}>
-                <Alert severity='error' ref={errRef}>{errMsg}</Alert>
+                <Alert severity='error'>{errMsg}</Alert>
             </Collapse>
 
             <form noValidate autoComplete="off" onSubmit={handleSubmit(test)}>
