@@ -1,8 +1,11 @@
-import { useRef, useState, useEffect} from "react";
+import {useRef, useState, useEffect, useContext} from "react";
 import {Alert, Button, Collapse, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
 import AuthenticationService from "../services/AuthentictionService";
+import {useDispatch, useSelector} from "react-redux";
+import {isAuthenticated, setUser} from "../userSlice";
+import {useNavigate} from "react-router-dom";
 
 const Login = () => {
 
@@ -29,7 +32,11 @@ const Login = () => {
     const errRef = useRef()
 
     const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false)
+    const [success, setSuccess] = useState(false);
+
+    const dispatch =useDispatch();
+
+    const [userData, setUserData] = useState({})
 
     useEffect(() => {
         emailRef.current.focus();
@@ -39,10 +46,14 @@ const Login = () => {
         setErrMsg('');
     }, [])
 
+
     const test = (data) => {
-        console.log(data)
-        AuthenticationService.authenticate({})
+        AuthenticationService.authenticate(data).then(res => {
+            dispatch(setUser(res))
+            navigate('/home')
+        });
     }
+    const navigate = useNavigate();
 
     return (
         <div>
@@ -72,7 +83,7 @@ const Login = () => {
                     variant="outlined"
                     type="password"
                     {...register(
-                        "password",
+                        "contrasena",
                         {required: 'Password required'})}
                     error={Boolean(errors.password)}
                     helperText={errors.password?.message}
