@@ -2,9 +2,7 @@ import {useRef, useState, useEffect} from "react";
 import {Alert, Button, Collapse, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
-import AuthenticationService from "../services/AuthentictionService";
-import {useDispatch} from "react-redux";
-import {setUser} from "../userSlice";
+import UserService from "../services/AuthentictionService";
 import {useNavigate} from "react-router-dom";
 
 const Login = () => {
@@ -30,8 +28,6 @@ const Login = () => {
     const emailRef = useRef()
     const [errMsg, setErrMsg] = useState('');
 
-    const dispatch =useDispatch();
-
     useEffect(() => {
         emailRef.current.focus();
     }, [])
@@ -41,13 +37,12 @@ const Login = () => {
     }, [])
 
 
-    const test = (data) => {
+    const authenticateUser = (data) => {
 
         setErrMsg("");
 
-        AuthenticationService.authenticate(data)
+        UserService.authenticate(data)
             .then(res => {
-                dispatch(setUser(res))
                 navigate('/home')})
             .catch(error => {
                 if (error.request.status === 401) {
@@ -71,7 +66,7 @@ const Login = () => {
                 <Alert severity='error'>{errMsg}</Alert>
             </Collapse>
 
-            <form noValidate autoComplete="off" onSubmit={handleSubmit(test)}>
+            <form noValidate autoComplete="off" onSubmit={handleSubmit(authenticateUser)}>
                 <TextField
                     label="Email"
                     variant="outlined"

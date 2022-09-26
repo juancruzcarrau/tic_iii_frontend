@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import NavBar from "./NavBar";
-import {useSelector} from "react-redux";
 import TableService from "../services/TableService";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {useForm} from "react-hook-form";
+import UserService from "../services/AuthentictionService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -12,7 +12,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const MainPage = () => {
 
-    const user = useSelector(state => state.activeUser.value[0]);
+    const user = UserService.getCurrentUser();
     const createTableRef = useRef();
 
     function handleClickCreateOpen() {
