@@ -3,9 +3,7 @@ import LoginPage from "./components/LoginPage";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {Navigate, Route, Routes} from "react-router-dom";
 import MainPage from "./components/MainPage";
-import {useDispatch, useSelector} from "react-redux";
-import {isAuthenticated, setUser} from "./userSlice";
-
+import UserService from "./services/AuthentictionService";
 
 const theme = createTheme({
     palette: {
@@ -22,8 +20,8 @@ const theme = createTheme({
 function App() {
 
     const ProtectedRoute = ({ children }) => {
-        const user = useSelector(store => store.activeUser.value);
-        if (user.length === 0) {
+        const currentUser = UserService.getCurrentUser();
+        if (currentUser === null) {
             return <Navigate to='/' replace />
         }else {
             return children;
