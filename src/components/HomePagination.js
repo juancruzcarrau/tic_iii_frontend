@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import tableService from "../services/TableService";
 import {useSelector} from "react-redux";
 import {Box, Pagination} from "@mui/material";
+import UserService from "../services/AuthentictionService";
 
 const pageSize = 6;
 
 const HomePagination = ({setTables, tableCreated, tableChange}) => {
 
-    const user = useSelector(state => state.activeUser.value[0]);
+    const user = UserService.getCurrentUser()
 
     const [pagination, setPagination] = useState({
         count: 0,

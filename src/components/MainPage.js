@@ -1,16 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import NavBar from "./NavBar";
-import {useSelector} from "react-redux";
-import TableService from "../services/TableService";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
-import Button from "@mui/material/Button";
-import {useForm} from "react-hook-form";
 import HomePage from "./HomePage";
+import UserService from "../services/AuthentictionService";
 
 const MainPage = () => {
 
     const [tableCreated, setTableCreated] = useState(false);
-    const user = UserService.getCurrentUser()
 
     return (
         <div>
