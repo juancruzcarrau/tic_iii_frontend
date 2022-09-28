@@ -3,6 +3,7 @@ import {Box, Pagination, Paper, styled} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import TableCard from "./TableCard";
 import HomePagination from "./HomePagination";
+import {useSelector} from "react-redux";
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -16,10 +17,14 @@ const HomePage = ({tableCreated}) => {
 
     const [tables, setTables] = useState([]);
 
+    const user = useSelector(state => state.activeUser.value[0]);
+
     const [tableChange, setTableChange] = useState(false);
 
     return (
         <div>
+            <h1>Welcome {user.nombre}!</h1>
+            <h3>Tables:</h3>
             <Box sx={{
                     flexGrow: 1,
                     display: "flex",
