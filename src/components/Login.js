@@ -1,8 +1,9 @@
-import { useRef, useState, useEffect} from "react";
+import {useRef, useState, useEffect} from "react";
 import {Alert, Button, Collapse, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
-import AuthenticationService from "../services/AuthentictionService";
+import UserService from "../services/AuthentictionService";
+import {useNavigate} from "react-router-dom";
 
 const Login = () => {
 
@@ -22,14 +23,10 @@ const Login = () => {
         }
     }
 
-    //FormHook
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const emailRef = useRef()
-    const errRef = useRef()
-
     const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false)
 
     useEffect(() => {
         emailRef.current.focus();
@@ -39,10 +36,24 @@ const Login = () => {
         setErrMsg('');
     }, [])
 
-    const test = (data) => {
-        console.log(data)
-        AuthenticationService.authenticate({})
+
+    const authenticateUser = (data) => {
+
+        setErrMsg("");
+
+        UserService.authenticate(data)
+            .then(res => {
+                navigate('/home')})
+            .catch(error => {
+                if (error.request.status === 401) {
+                    setErrMsg("Email o contraseña incorrecta.")
+                } else {
+                    setErrMsg("Ha ocurrido un error inesperado.")
+                    console.log(error)
+                }
+            });
     }
+    const navigate = useNavigate();
 
     return (
         <div>
@@ -52,10 +63,10 @@ const Login = () => {
             <h1 style={{fontFamily: "Montserrat"}}>Welcome to Thorus</h1>
 
             <Collapse in={errMsg.length !== 0} sx={styles.alert}>
-                <Alert severity='error' ref={errRef}>{errMsg}</Alert>
+                <Alert severity='error'>{errMsg}</Alert>
             </Collapse>
 
-            <form noValidate autoComplete="off" onSubmit={handleSubmit(test)}>
+            <form noValidate autoComplete="off" onSubmit={handleSubmit(authenticateUser)}>
                 <TextField
                     label="Email"
                     variant="outlined"
@@ -72,7 +83,7 @@ const Login = () => {
                     variant="outlined"
                     type="password"
                     {...register(
-                        "password",
+                        "contrasena",
                         {required: 'Password required'})}
                     error={Boolean(errors.password)}
                     helperText={errors.password?.message}
