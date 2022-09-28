@@ -8,6 +8,15 @@ import UserService from "../services/AuthentictionService";
 
 const HomePage = ({tableCreated}) => {
 
+    const style = {
+        container: {
+            maxWidth: "90%"
+        },
+        element: {
+            minWidth: "30vw"
+        }
+    }
+
     const [tables, setTables] = useState([]);
 
     const user = UserService.getCurrentUser()
@@ -25,9 +34,9 @@ const HomePage = ({tableCreated}) => {
                     justifyContent: "center",
                     marginBottom: "75px"
                         }}>
-                <Grid2 sx={{maxWidth: "90%"}} container rowSpacing={3} columnSpacing={{xs:1, sm: 2, md:3}} columns={3} >
+                <Grid2 sx={style.container} container spacing={3} >
                     {tables.map((element, index) => {
-                        return <Grid2 xs={1}> <TableCard tablero={element} tableChange={setTableChange}/> </Grid2>
+                        return <Grid2 xs={4} key={element.id} sx={style.element}> <TableCard tablero={element} tableChange={setTableChange}/> </Grid2>
                     })}
                 </Grid2>
             </Box>
