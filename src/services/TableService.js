@@ -14,8 +14,18 @@ const TableService = {
             })
     },
 
-    getAll: async (data) => {
-        return await axios.get(process.env.REACT_APP_BACKEND_URL + "/tableros", {params: {email:data}})
+    getAll: async (data, sort, index, size) => {
+        return await axios.get(process.env.REACT_APP_BACKEND_URL + "/tableros/todos", {params: {email:data, sort:sort, index:index, size:size}})
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
+    },
+
+    update: async (data) => {
+        return await axios.put(process.env.REACT_APP_BACKEND_URL + "/tableros/update", data)
             .then(res => {
                 return res.data;
             })

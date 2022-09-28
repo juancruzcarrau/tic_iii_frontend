@@ -53,7 +53,7 @@ const NavBar = ({dialogFunction}) => {
 
     return (
         <AppBar position="sticky">
-            <Container maxWidth="xl">
+            <Container maxWidth="100vh">
                 <Toolbar disableGutters>
                     <img src={logo} alt="logo" style={{width: "50px"}}/>
                     <Typography
