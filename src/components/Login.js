@@ -1,9 +1,10 @@
-import {useRef, useState, useEffect} from "react";
-import {Alert, Button, Collapse, TextField} from "@mui/material";
+import React, {useRef, useState, useEffect} from "react";
+import {Alert, Button, Collapse, Dialog, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
 import UserService from "../services/AuthentictionService";
 import {useNavigate} from "react-router-dom";
+import TableService from "../services/TableService";
 
 const Login = () => {
 
@@ -23,10 +24,19 @@ const Login = () => {
         }
     }
 
-    const {register, handleSubmit, formState: {errors}} = useForm();
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
+
+    const handleCreateDialogClose = () => {
+        setOpenDialog(false);
+        reset();
+    };
+
+    const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
     const emailRef = useRef()
-    const [errMsg, setErrMsg] = useState('');
+    const [errMsg, setErrMsg, openDialog, setOpenDialog] = useState('');
 
     useEffect(() => {
         emailRef.current.focus();
@@ -53,6 +63,14 @@ const Login = () => {
                 }
             });
     }
+
+    const handleCreate = (data) => {
+        setOpenDialog(false);
+
+        reset();
+        console.log(tableros)
+    }
+
     const navigate = useNavigate();
 
     return (
@@ -101,47 +119,46 @@ const Login = () => {
                 </div>
             </form>
 
-
-
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Sign up</DialogTitle>
+            <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition}>
+                <DialogTitle>Create Table</DialogTitle>
                 <DialogContent>
-                  <DialogContentText>
-                    Please, write down the requested information.
-                  </DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Email Address"
-                    type="email"
-                    fullWidth
-                    variant="outlined"
-                 />
-                 <TextField
-                    autoFocus
-                    margin="dense"
-                    id="password1"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    variant="outlined"
-                 />
-                 <TextField
-                    autoFocus
-                    margin="dense"
-                    id="password2"
-                    label="Repeat Password"
-                    type="password"
-                    fullWidth
-                    variant="outlined"
-                 />
-                 </DialogContent>
-                    <DialogActions>
-                      <Button variant="outlined" onClick={handleClose}>Cancel</Button>
-                      <Button variant="contained" onClick={handleClose}>Register</Button>
-                 </DialogActions>
-             </Dialog>
+                    <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
+                        <TextField
+                            {...register(
+                                "email",
+                                {required: 'Email required', pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email"}})}
+                            margin="dense"
+                            id="name"
+                            label="Email Address"
+                            type="email"
+                            fullWidth
+                            variant="outlined"
+                        />
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="password1"
+                            label="Password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                        />
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="password2"
+                            label="Repeat Password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                        />
+                        <DialogActions>
+                            <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
+                            <Button variant="contained"  type="submit">Register</Button>
+                        </DialogActions>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
         </div>
     )
