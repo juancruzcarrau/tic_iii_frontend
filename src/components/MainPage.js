@@ -10,7 +10,7 @@ import HomePage from "./HomePage";
 const MainPage = () => {
 
     const [tableCreated, setTableCreated] = useState(false);
-
+    const user = UserService.getCurrentUser()
 
     return (
         <div>

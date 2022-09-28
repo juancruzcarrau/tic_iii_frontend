@@ -13,12 +13,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
-import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {removeUser, setUser} from "../userSlice";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import TableService from "../services/TableService";
+import UserService from "../services/AuthentictionService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -36,11 +35,10 @@ const NavBar = ({dialogFunction, tableCreated}) => {
     }
 
 
-    const dispatch = useDispatch()
     const navigate = useNavigate();
 
     function handleCloseUserMenu() {
-        dispatch(removeUser());
+        UserService.logOut();
         navigate('/')
     }
 
@@ -65,7 +63,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
 
-    const user = useSelector(state => state.activeUser.value[0]);
+    const user = UserService.getCurrentUser();
 
     const handleCreate = (data) => {
         setOpenDialog(false);
