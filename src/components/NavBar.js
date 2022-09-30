@@ -16,7 +16,11 @@ import '../App.css';
 import {useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 
-const NavBar = ({dialogFunction}) => {
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const NavBar = ({dialogFunction, tableCreated}) => {
 
     const styles = {
         buttonArea: {
@@ -35,6 +39,19 @@ const NavBar = ({dialogFunction}) => {
         navigate('/')
     }
 
+    function handleClickCreateOpen() {
+        setOpenDialog(true);
+    }
+
+    const handleCreateDialogClose = () => {
+        setOpenDialog(false);
+        reset();
+    };
+
+    const [openDialog, setOpenDialog] = React.useState(false);
+
+    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -45,10 +62,19 @@ const NavBar = ({dialogFunction}) => {
 
     const user = UserService.getCurrentUser();
 
+    const handleCreate = (data) => {
+        setOpenDialog(false);
+        data["mailUsuario"] = user.email;
+        TableService.create(data).then(r => {
+            dialogFunction(!tableCreated);
+        });
+        reset();
+    }
+
 
     return (
         <AppBar position="sticky">
-            <Container maxWidth="xl">
+            <Container maxWidth="100vh">
                 <Toolbar disableGutters>
                     <img src={logo} alt="logo" style={{width: "50px"}}/>
                     <Typography
@@ -122,10 +148,37 @@ const NavBar = ({dialogFunction}) => {
                         <Button sx={styles.buttonArea} variant="text">
                             Recent
                         </Button>
-                        <Button sx={styles.buttonArea} variant="text" onClick={dialogFunction}>
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickCreateOpen}>
                             Create
                         </Button>
                     </Box>
+
+                    <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition}>
+                        <DialogTitle>Create Table</DialogTitle>
+                        <DialogContent>
+                            <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
+                                <TextField
+                                    autoFocus
+                                    {...register(
+                                        "nombre",
+                                        {required: 'Name required'})}
+                                    error={Boolean(errors.nombre)}
+                                    helperText={errors.nombre?.message}
+                                    margin="dense"
+                                    id="nombre"
+                                    label="Name"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                />
+                                <DialogActions>
+                                    <Button onClick={handleCreateDialogClose}>Cancel</Button>
+                                    <Button type="submit">Create</Button>
+                                </DialogActions>
+                            </form>
+                        </DialogContent>
+
+                    </Dialog>
 
 
                     <Box sx={{ flexGrow: 0 }}>
