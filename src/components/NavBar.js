@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -17,7 +17,7 @@ import {useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
-import TableService from "../services/TableService";
+import BoardService from "../services/BoardService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -77,7 +77,7 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
     const handleCreate = (data) => {
         setOpenDialog(false);
         data["mailUsuario"] = user.email;
-        TableService.create(data).then(r => {
+        BoardService.create(data).then(r => {
             dialogFunction(!tableCreated);
         });
         reset();

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const TableService = {
+const BoardService = {
 
     create: async (data) => {
 
@@ -42,7 +42,17 @@ const TableService = {
             .catch(error => {
                 throw error;
             })
+    },
+
+    getById: async (id) => {
+        return await axios.get(process.env.REACT_APP_BACKEND_URL + "/tableros/" + id)
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
     }
 }
 
-export default TableService;
+export default BoardService;
