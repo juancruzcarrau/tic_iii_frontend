@@ -3,7 +3,7 @@ import LoginPage from "./components/LoginPage";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {Navigate, Route, Routes} from "react-router-dom";
 import MainPage from "./components/MainPage";
-import UserService from "./services/AuthentictionService";
+import UserService from "./services/UserService";
 
 const theme = createTheme({
     palette: {

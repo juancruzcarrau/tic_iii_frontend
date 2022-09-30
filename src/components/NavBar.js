@@ -14,10 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
-import {useForm} from "react-hook-form";
-import TableService from "../services/TableService";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
 
 const NavBar = ({dialogFunction}) => {
 

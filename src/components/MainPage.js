@@ -4,7 +4,8 @@ import TableService from "../services/TableService";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {useForm} from "react-hook-form";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
+import Board from "./Board";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -86,6 +87,7 @@ const MainPage = () => {
             <div>
 
             </div>
+            <Board/>
         </div>
     );
 };
