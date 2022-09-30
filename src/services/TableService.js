@@ -32,6 +32,16 @@ const TableService = {
             .catch(error => {
                 throw error;
             })
+    },
+
+    getFavorites: async (data, sort, index, size) => {
+        return await axios.get(process.env.REACT_APP_BACKEND_URL + "/tableros/todos/favoritos", {params: {email:data, sort:sort, index:index, size:size}})
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
     }
 }
 
