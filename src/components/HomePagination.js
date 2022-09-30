@@ -3,9 +3,9 @@ import tableService from "../services/TableService";
 import {Box, Pagination} from "@mui/material";
 import UserService from "../services/UserService";
 
-const pageSize = 6;
+const pageSize = 8;
 
-const HomePagination = ({setTables, tableCreated, tableChange}) => {
+const HomePagination = ({setTables, tableCreated, tableChange, type}) => {
 
     const user = UserService.getCurrentUser()
 
@@ -16,12 +16,20 @@ const HomePagination = ({setTables, tableCreated, tableChange}) => {
     })
 
     useEffect(() => {
-        tableService.getAll(user.email, "desc", pagination.from, pagination.to)
-            .then(res => {
-                setPagination({...pagination, count: res.totalElements});
-                setTables(res.data);
-            })
-    }, [pagination.from, pagination.to, tableCreated, tableChange]);
+        if (type === 'favorites'){
+            tableService.getFavorites(user.email, "desc", pagination.from, pagination.to)
+                .then(res => {
+                    setPagination({...pagination, count: res.totalElements});
+                    setTables(res.data);
+                })
+        }else {
+            tableService.getAll(user.email, "desc", pagination.from, pagination.to)
+                .then(res => {
+                    setPagination({...pagination, count: res.totalElements});
+                    setTables(res.data);
+                })
+        }
+    }, [pagination.from, pagination.to, tableCreated, tableChange, type]);
 
     const handlePageChange = (event, page) => {
         setPagination({...pagination, from:(page-1)});
