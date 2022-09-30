@@ -32,7 +32,7 @@ function App() {
     const ProtectedRouteMain = ({ children }) => {
         const currentUser = UserService.getCurrentUser();
         if (currentUser === null) {
-            return <Navigate to='/' replace />
+            return <Navigate to='/login' replace />
         }else {
             return children;
         }
@@ -43,8 +43,8 @@ function App() {
       <ThemeProvider theme={theme}>
           <div className="App">
               <Routes>
-                  <Route path='/' element={<ProtectedRouteLogin> <LoginPage /> </ProtectedRouteLogin>} />
-                  <Route path='/home' element={<ProtectedRouteMain> <MainPage /> </ProtectedRouteMain>} />
+                  <Route path='/login' element={<ProtectedRouteLogin> <LoginPage /> </ProtectedRouteLogin>} />
+                  <Route path='/*' element={<ProtectedRouteMain> <MainPage /> </ProtectedRouteMain>} />
               </Routes>
           </div>
       </ThemeProvider>

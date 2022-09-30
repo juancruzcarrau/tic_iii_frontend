@@ -1,7 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import NavBar from "./NavBar";
 import HomePage from "./HomePage";
-import UserService from "../services/AuthentictionService";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 const MainPage = () => {
 
@@ -10,7 +10,11 @@ const MainPage = () => {
     return (
         <div>
             <NavBar dialogFunction={() => setTableCreated} tableCreated={tableCreated}/>
-            <HomePage tableCreated={tableCreated}/>
+            <Routes>
+                <Route path='/' element={ <Navigate to="/home" /> }/>
+                <Route path="/home" element={<HomePage tableCreated={tableCreated}/>}/>
+                <Route path="/board/:id"/>
+            </Routes>
         </div>
     );
 };

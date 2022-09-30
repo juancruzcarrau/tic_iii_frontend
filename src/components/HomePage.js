@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {Box, Pagination, Paper, styled} from "@mui/material";
+import {Box} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import TableCard from "./TableCard";
 import HomePagination from "./HomePagination";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
 
 
 const HomePage = ({tableCreated}) => {
@@ -35,7 +35,7 @@ const HomePage = ({tableCreated}) => {
                     marginBottom: "75px"
                         }}>
                 <Grid2 sx={style.container} container spacing={3} >
-                    {tables.map((element, index) => {
+                    {tables.map((element) => {
                         return <Grid2 xs={4} key={element.id} sx={style.element}> <TableCard tablero={element} tableChange={setTableChange}/> </Grid2>
                     })}
                 </Grid2>

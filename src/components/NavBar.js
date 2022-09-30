@@ -1,4 +1,3 @@
-import React, {useEffect, useRef} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,6 +14,9 @@ import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
+import {useForm} from "react-hook-form";
+import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
+import TableService from "../services/TableService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -36,7 +38,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
     function handleCloseUserMenu() {
         UserService.logOut();
-        navigate('/')
+        navigate('/login')
     }
 
     function handleClickCreateOpen() {
