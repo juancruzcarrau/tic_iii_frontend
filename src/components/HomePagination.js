@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import tableService from "../services/TableService";
-import {useSelector} from "react-redux";
 import {Box, Pagination} from "@mui/material";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
 
 const pageSize = 8;
 
