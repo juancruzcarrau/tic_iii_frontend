@@ -67,7 +67,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
     const handleCreate = (data) => {
         setOpenDialog(false);
-        data["mailUsuario"] = user.email;
+        data = {...data, mailUsuario: user.email};
         TableService.create(data).then(r => {
             dialogFunction(!tableCreated);
         });
