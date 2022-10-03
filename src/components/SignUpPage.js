@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,12 +14,23 @@ import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
-import {Alert, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
+import {
+    Alert,
+    Collapse,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    InputAdornment,
+    Slide,
+    TextField
+} from "@mui/material";
 import {useForm} from "react-hook-form";
 import TableService from "../services/TableService";
 import UserService from "../services/AuthentictionService";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
-const SignUpPage = () => {
+const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
 
     const styles = {
         buttonArea: {
@@ -30,27 +41,38 @@ const SignUpPage = () => {
         }
     }
 
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    //const user = UserService.getCurrentUser();
 
-    const [openDialog, setOpenDialog] = React.useState(false);
+    const userRef = useRef();
+    const errRef = useRef();
+
+    const [user, setUser] = useState('');
+    const [validName, setValidName] = useState(false);
+    const [userFocus, setUserFocus] = useState(false);
+
+    const [errMsg, setErrMsg] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
+    const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
-    const user = UserService.getCurrentUser();
-
-    const handleCreateDialogClose = () => {
-        setOpenDialog(false);
+    const handleClose = () => {
+        handleCloseDialog(false);
         reset();
     };
 
     const handleCreate = (data) => {
-        setOpenDialog(false);
-        data["mailUsuario"] = user.email;
-        data["nombreUsuario"] = user.nombre;
-        TableService.create(data).then(r => {
-            dialogFunction(!tableCreated);
-        });
-        reset();
+        handleCloseDialog(false);
+        console.log("ok");
+        //data["mailUsuario"] = user.email;
+        //data["nombreUsuario"] = user.nombre;
+        //TableService.create(data).then(r => {
+        //    dialogFunction(!tableCreated);
+        //});
+        //reset();
     }
 
     // const handleCreate = (data) => {
@@ -77,14 +99,31 @@ const SignUpPage = () => {
                 <Alert severity='error'>{errMsg}</Alert>
             </Collapse>
 
-            <Dialog open={openDialog} onClose={handleCreateDialogClose}>
+            <Dialog open={isDialogOpened} onClose={handleClose}>
                 <DialogTitle>Sign up</DialogTitle>
                 <DialogContent>
                     <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
                         <TextField
                             {...register(
+                                "name",
+                                {required: 'Name required'})}
+                            error={Boolean(errors.name)}
+                            helperText={errors.name?.message}
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Name"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                        />
+                        <TextField
+                            {...register(
                                 "email",
                                 {required: 'Email required', pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email"}})}
+                            error={Boolean(errors.email)}
+                            helperText={errors.email?.message}
+                            autoFocus
                             margin="dense"
                             id="name"
                             label="Email Address"
@@ -93,25 +132,61 @@ const SignUpPage = () => {
                             variant="outlined"
                         />
                         <TextField
+                            {...register(
+                                "password1",
+                                {required: 'Password required'})}
+                            error={Boolean(errors.password1)}
+                            helperText={errors.password1?.message}
                             autoFocus
                             margin="dense"
                             id="password1"
                             label="Password"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             fullWidth
                             variant="outlined"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
                         />
                         <TextField
+                            {...register(
+                                "password2",
+                                {required: 'Password required'})}
+                            error={Boolean(errors.password2)}
+                            helperText={errors.password2?.message}
                             autoFocus
                             margin="dense"
                             id="password2"
                             label="Repeat Password"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             fullWidth
                             variant="outlined"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
                         />
                         <DialogActions>
-                            <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
+                            <Button variant="outlined" onClick={handleClose}>Cancel</Button>
                             <Button variant="contained"  type="submit">Register</Button>
                         </DialogActions>
                     </form>
@@ -120,8 +195,7 @@ const SignUpPage = () => {
 
         </div>
 
-
     );
 };
 
-export default NavBar;
+export default SignUpPage;

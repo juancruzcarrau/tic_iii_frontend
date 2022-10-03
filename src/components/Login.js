@@ -1,9 +1,12 @@
-import {useRef, useState, useEffect} from "react";
-import {Alert, Button, Collapse, TextField} from "@mui/material";
+import React, {useRef, useState, useEffect} from "react";
+import {Alert, Button, Collapse, InputAdornment, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
 import UserService from "../services/AuthentictionService";
 import {useNavigate} from "react-router-dom";
+import SignUpPage from "./SignUpPage";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const Login = () => {
 
@@ -28,6 +31,16 @@ const Login = () => {
     const emailRef = useRef()
     const [errMsg, setErrMsg] = useState('');
 
+    const [DialogIsOpen, setDialogIsOpen] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
+    const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
+    const handleDialogOpen = () => {
+        setDialogIsOpen(!DialogIsOpen);
+    };
+
     useEffect(() => {
         emailRef.current.focus();
     }, [])
@@ -35,7 +48,6 @@ const Login = () => {
     useEffect(() => {
         setErrMsg('');
     }, [])
-
 
     const authenticateUser = (data) => {
 
@@ -81,13 +93,26 @@ const Login = () => {
                 <TextField
                     label="Password"
                     variant="outlined"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register(
                         "contrasena",
                         {required: 'Password required'})}
                     error={Boolean(errors.password)}
                     helperText={errors.password?.message}
                     sx={styles.field}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                >
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }}
                 />
 
                 <div style={styles.buttonArea}>
@@ -95,9 +120,12 @@ const Login = () => {
                         Log in
                     </Button>
 
-                    <Button variant="contained">
-                        Sign up
-                    </Button>
+                    <SignUpPage
+                        isDialogOpened={DialogIsOpen}
+                        handleCloseDialog={() => setDialogIsOpen(false)}
+                    />
+                    <Button variant="contained" onClick={() => handleDialogOpen()}>Sign up</Button>
+
                 </div>
             </form>
         </div>
