@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import tableService from "../services/TableService";
+import tableService from "../services/BoardService";
 import {Box, Pagination} from "@mui/material";
 import UserService from "../services/UserService";
 
