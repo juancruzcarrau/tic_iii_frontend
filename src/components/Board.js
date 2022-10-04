@@ -34,7 +34,8 @@ const Board = () => {
             flexDirection: "row",
             justifyContent: "flexStart",
             overflowX:"auto",
-            columnGap: "10px"
+            columnGap: "10px",
+            maxHeight: "100%"
         },
         favouriteButton: {
             minWidth:0,
@@ -46,7 +47,7 @@ const Board = () => {
             }
         },
         listaBox: {
-
+            maxHeight: "100%"
         },
         stack: {
             overflowX: "auto"
@@ -76,7 +77,7 @@ const Board = () => {
         copy.mainFlex = {...copy.mainFlex, minHeight: "calc(100% - 15px - 10px - " + offsetTop + "px)"}
         setStyles(copy)
     }
-    
+
     return(
         <Box sx={styles.mainFlex} ref={ref}>
 
@@ -92,22 +93,15 @@ const Board = () => {
             </Box>
 
             <div style={styles.listsContainer}>
-                {board.listas.map((key) => {
+                {board.listas.map((list) => {
                     return(
                         <Box sx={styles.listaBox}>
-                            <List key={key}/>
+                            <List key={list.posicion} data={list}/>
                         </Box>
                     )
                 })}
             </div>
 
-            {/*<Stack sx={styles.stack} spacing={} direction="row">*/}
-            {/*    {range(30).map((key) => {*/}
-            {/*        return(*/}
-            {/*            <List key={key}/>*/}
-            {/*        )*/}
-            {/*    })}*/}
-            {/*</Stack>*/}
         </Box>
     )
 }
