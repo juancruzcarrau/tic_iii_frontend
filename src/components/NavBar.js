@@ -55,6 +55,11 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         navigate('/login')
     }
 
+    function editProfile() {
+        UserService.editProfile();
+        navigate('/editprofile')
+    }
+
     function handleClickCreateOpen() {
         setOpenDialog(true);
     }
@@ -128,6 +133,9 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                         {/*        display: { xs: 'block', md: 'none' },*/}
                         {/*    }}*/}
                         {/*>*/}
+                        {/*    <MenuItem onClick={handleCloseUserMenu}>*/}
+                        {/*        <Typography textAlign="center">Edit profile</Typography>*/}
+                        {/*    </MenuItem>*/}
                         {/*    <MenuItem onClick={handleCloseUserMenu}>*/}
                         {/*        <Typography textAlign="center">Logout</Typography>*/}
                         {/*    </MenuItem>*/}
@@ -213,6 +221,9 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                          >
+                            <MenuItem onClick={editProfile}>
+                                <Typography textAlign="center">Edit profile</Typography>
+                            </MenuItem>
                             <MenuItem onClick={logout}>
                                 <Typography textAlign="center">Logout</Typography>
                             </MenuItem>

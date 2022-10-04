@@ -30,6 +30,16 @@ const UserService = {
 
     },
 
+    editProfile: async (data) => {
+        if (localStorage.getItem('currentUser') !== null){
+
+        // devolver el objeto usuario
+
+        } else {
+            throw Error('There is no current user authenticated.')
+        }
+    },
+
     getCurrentUser: () => {
         return JSON.parse(localStorage.getItem('currentUser')) //returns null if there is no current user
     },
