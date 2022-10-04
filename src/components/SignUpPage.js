@@ -1,19 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
-import {useNavigate} from "react-router-dom";
 import {
     Alert,
     Collapse,
@@ -22,12 +10,9 @@ import {
     DialogContent,
     DialogTitle,
     InputAdornment,
-    Slide,
     TextField
 } from "@mui/material";
 import {useForm} from "react-hook-form";
-import TableService from "../services/TableService";
-import UserService from "../services/AuthentictionService";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
@@ -41,22 +26,10 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
         }
     }
 
-    //const navigate = useNavigate();
-    //const user = UserService.getCurrentUser();
-
-    const userRef = useRef();
-    const errRef = useRef();
-
-    const [user, setUser] = useState('');
-    const [validName, setValidName] = useState(false);
-    const [userFocus, setUserFocus] = useState(false);
-
     const [errMsg, setErrMsg] = useState('');
-
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
-
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
     const handleClose = () => {
@@ -65,43 +38,25 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
     };
 
     const handleCreate = (data) => {
-        handleCloseDialog(false);
-        console.log("ok");
-        //data["mailUsuario"] = user.email;
-        //data["nombreUsuario"] = user.nombre;
-        //TableService.create(data).then(r => {
-        //    dialogFunction(!tableCreated);
-        //});
-        //reset();
+        if (data.password1 === data.password2) {
+            handleCloseDialog(false);
+            console.log(data);
+        } else {
+            setErrMsg("Passwords do not match")
+        }
     }
-
-    // const handleCreate = (data) => {
-    //
-    //     setErrMsg("");
-    //
-    //     UserService.authenticate(data)
-    //         .then(res => {
-    //             navigate('/home')})
-    //         .catch(error => {
-    //             if (error.request.status === 401) {
-    //                 setErrMsg("Email o contraseña incorrecta.")
-    //             } else {
-    //                 setErrMsg("Ha ocurrido un error inesperado.")
-    //                 console.log(error)
-    //             }
-    //         });
-    // }
 
     return (
         <div>
 
-            <Collapse in={errMsg.length !== 0} sx={styles.alert}>
-                <Alert severity='error'>{errMsg}</Alert>
-            </Collapse>
-
             <Dialog open={isDialogOpened} onClose={handleClose}>
                 <DialogTitle>Sign up</DialogTitle>
                 <DialogContent>
+
+                    <Collapse in={errMsg.length !== 0} sx={styles.alert}>
+                        <Alert severity='error'>{errMsg}</Alert>
+                    </Collapse>
+
                     <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
                         <TextField
                             {...register(
@@ -134,7 +89,7 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
                         <TextField
                             {...register(
                                 "password1",
-                                {required: 'Password required'})}
+                                {required: 'Password required', pattern: {value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i, message: "Invalid password. It must contain at least eight characters, one letter and one number"}})}
                             error={Boolean(errors.password1)}
                             helperText={errors.password1?.message}
                             autoFocus
@@ -161,7 +116,7 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
                         <TextField
                             {...register(
                                 "password2",
-                                {required: 'Password required'})}
+                                {required: 'Password required', pattern: {value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i, message: "Invalid password. It must contain at least eight characters, one letter and one number"}})}
                             error={Boolean(errors.password2)}
                             helperText={errors.password2?.message}
                             autoFocus
