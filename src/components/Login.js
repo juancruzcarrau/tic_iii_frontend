@@ -1,4 +1,4 @@
-import {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import {Alert, Button, Collapse, InputAdornment, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
@@ -30,6 +30,7 @@ const Login = () => {
 
     const emailRef = useRef()
     const [errMsg, setErrMsg] = useState('');
+    const [successfulMsg, setSuccessMsg] = useState('');
 
     const [DialogIsOpen, setDialogIsOpen] = useState(false);
 
@@ -41,9 +42,13 @@ const Login = () => {
         setDialogIsOpen(!DialogIsOpen);
     };
 
-    useEffect(() => {
-        emailRef.current.focus();
-    }, [])
+    function sucessfulSignUp() {
+        setSuccessMsg("Successfully signed up");
+    }
+
+    //useEffect(() => {
+    //    emailRef.current.focus();
+    //}, [])
 
     useEffect(() => {
         setErrMsg('');
@@ -78,8 +83,13 @@ const Login = () => {
                 <Alert severity='error'>{errMsg}</Alert>
             </Collapse>
 
+            <Collapse in={successfulMsg.length !== 0} sx={styles.alert}>
+                <Alert severity='success'>{successfulMsg}</Alert>
+            </Collapse>
+
             <form noValidate autoComplete="off" onSubmit={handleSubmit(authenticateUser)}>
                 <TextField
+                    autoFocus
                     label="Email"
                     variant="outlined"
                     inputRef={emailRef}
@@ -123,6 +133,7 @@ const Login = () => {
                     <SignUpPage
                         isDialogOpened={DialogIsOpen}
                         handleCloseDialog={() => setDialogIsOpen(false)}
+                        setSuccess={() => sucessfulSignUp()}
                     />
                     <Button variant="contained" onClick={() => handleDialogOpen()}>Sign up</Button>
 

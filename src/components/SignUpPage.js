@@ -14,8 +14,9 @@ import {
 } from "@mui/material";
 import {useForm} from "react-hook-form";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
+import UserService from "../services/UserService";
 
-const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
+const SignUpPage = ({ isDialogOpened, handleCloseDialog, setSuccess}) => {
 
     const styles = {
         buttonArea: {
@@ -40,8 +41,11 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
     const handleCreate = (data) => {
         if (data.password1 === data.password2) {
             handleCloseDialog(false);
-            const newUser = {name: data.name, email: data.email, password: data.password1};
-            console.log(newUser);
+            const newUser = {nombre: data.name, email: data.email, contrasena: data.password1};
+            UserService.signup(newUser).then(r => {
+                handleCloseDialog(!isDialogOpened);
+                setSuccess(true);
+            });
             reset();
         } else {
             setErrMsg("Passwords do not match")
