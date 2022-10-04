@@ -1,8 +1,8 @@
-import React, {useRef, useState, useEffect} from "react";
-import {Alert, Button, Collapse, InputAdornment, TextField} from "@mui/material";
+import {useRef, useState, useEffect} from "react";
+import {Alert, Button, Collapse, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
 import {useNavigate} from "react-router-dom";
 import SignUpPage from "./SignUpPage";
 import IconButton from "@mui/material/IconButton";
@@ -58,9 +58,9 @@ const Login = () => {
                 navigate('/home')})
             .catch(error => {
                 if (error.request.status === 401) {
-                    setErrMsg("Email o contraseña incorrecta.")
+                    setErrMsg("Invalid email or password. Try again.")
                 } else {
-                    setErrMsg("Ha ocurrido un error inesperado.")
+                    setErrMsg("An unexpected error has occurred.")
                     console.log(error)
                 }
             });

@@ -1,15 +1,39 @@
 import React, {useEffect, useState} from 'react';
 import Typography from "@mui/material/Typography";
-import {Button, Card, CardActionArea, CardActions, CardContent, Checkbox} from "@mui/material";
+import {Card, CardActionArea, CardActions, CardContent, Checkbox} from "@mui/material";
 import {Favorite, FavoriteBorder} from "@mui/icons-material";
 import TableService from "../services/TableService";
 import login from "./Login";
+import Menu from "@mui/material/Menu";
+import IconButton from "@mui/material/IconButton";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MenuItem from "@mui/material/MenuItem";
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
+
 const TableCard = ({tablero, tableChange}) => {
 
+    const style = {
+        buttonAction: {
+            display: "flex",
+            justifyContent: "space-between"
+        }
+    }
+
     const [favorito, setFavorito] = useState(tablero.favorito);
+
+    const [onTop, setOnTop] = useState(false);
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     useEffect(() => {
         setFavorito(tablero.favorito)
@@ -36,11 +60,33 @@ const TableCard = ({tablero, tableChange}) => {
                         {tablero.nombre}
                     </Typography>
                     <Typography sx={{ mb: 0.5 }} color="text.secondary">
-                        Last modification: {tablero.fechaModificacion}
+                        Last modification: {tablero.fechaModificacion[2]}-{tablero.fechaModificacion[1]}-{tablero.fechaModificacion[0]}
                     </Typography>
                 </CardContent>
-                <CardActions>
+                <CardActions sx={style.buttonAction}>
                     <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={favorito} onChange={handleFavoriteChange}/>
+
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={open ? 'long-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                    >
+                        <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="long-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}>Store</MenuItem>
+                    </Menu>
                 </CardActions>
             </CardActionArea>
         </Card>

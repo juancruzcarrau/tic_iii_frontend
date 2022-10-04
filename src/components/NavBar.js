@@ -14,16 +14,16 @@ import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
+import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
+import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
 import TableService from "../services/TableService";
-import UserService from "../services/AuthentictionService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({dialogFunction, tableCreated}) => {
+const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) => {
 
     const styles = {
         buttonArea: {
@@ -31,15 +31,21 @@ const NavBar = ({dialogFunction, tableCreated}) => {
             justifyContent: "space-between",
             marginLeft: "15px",
             color: "inherit"
+        },
+        buttonCreate:{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+            marginTop: "10px"
         }
     }
 
 
     const navigate = useNavigate();
 
-    function handleCloseUserMenu() {
+    function logout() {
         UserService.logOut();
-        navigate('/')
+        navigate('/login')
     }
 
     function handleClickCreateOpen() {
@@ -60,8 +66,11 @@ const NavBar = ({dialogFunction, tableCreated}) => {
         setAnchorElUser(event.currentTarget);
     };
 
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const handleCloseUserMenu = (event) => {
+        setAnchorElUser(null)
+    }
 
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const user = UserService.getCurrentUser();
 
@@ -142,10 +151,10 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                         Thorus
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <Button sx={styles.buttonArea} variant="text">
+                        <Button sx={styles.buttonArea} variant="text" onClick={closeFavorites}>
                             Workspaces
                         </Button>
-                        <Button sx={styles.buttonArea} variant="text">
+                        <Button sx={styles.buttonArea} variant="text" onClick={setFavorites}>
                             Favorites
                         </Button>
                         <Button sx={styles.buttonArea} variant="text">
@@ -162,6 +171,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                             <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
                                 <TextField
                                     autoFocus
+                                    variant="outlined"
                                     {...register(
                                         "nombre",
                                         {required: 'Name required'})}
@@ -172,11 +182,10 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                                     label="Name"
                                     type="text"
                                     fullWidth
-                                    variant="standard"
                                 />
-                                <DialogActions>
-                                    <Button onClick={handleCreateDialogClose}>Cancel</Button>
-                                    <Button type="submit">Create</Button>
+                                <DialogActions sx={styles.buttonCreate}>
+                                    <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
+                                    <Button variant="contained" type="submit">Create</Button>
                                 </DialogActions>
                             </form>
                         </DialogContent>
@@ -206,7 +215,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                          >
-                            <MenuItem onClick={handleCloseUserMenu}>
+                            <MenuItem onClick={logout}>
                                 <Typography textAlign="center">Logout</Typography>
                             </MenuItem>
                         </Menu>

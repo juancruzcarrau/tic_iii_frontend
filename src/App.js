@@ -3,7 +3,7 @@ import LoginPage from "./components/LoginPage";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {Navigate, Route, Routes} from "react-router-dom";
 import MainPage from "./components/MainPage";
-import UserService from "./services/AuthentictionService";
+import UserService from "./services/UserService";
 
 const theme = createTheme({
     palette: {
@@ -32,7 +32,7 @@ function App() {
     const ProtectedRouteMain = ({ children }) => {
         const currentUser = UserService.getCurrentUser();
         if (currentUser === null) {
-            return <Navigate to='/' replace />
+            return <Navigate to='/login' replace />
         }else {
             return children;
         }
@@ -43,8 +43,8 @@ function App() {
       <ThemeProvider theme={theme}>
           <div className="App">
               <Routes>
-                  <Route path='/' element={<ProtectedRouteLogin> <LoginPage /> </ProtectedRouteLogin>} />
-                  <Route path='/home' element={<ProtectedRouteMain> <MainPage /> </ProtectedRouteMain>} />
+                  <Route path='/login' element={<ProtectedRouteLogin> <LoginPage /> </ProtectedRouteLogin>} />
+                  <Route path='/*' element={<ProtectedRouteMain> <MainPage /> </ProtectedRouteMain>} />
               </Routes>
           </div>
       </ThemeProvider>
