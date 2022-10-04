@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Typography from "@mui/material/Typography";
-import {Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Checkbox} from "@mui/material";
-import {Card, CardActionArea, CardActions, CardContent, Checkbox} from "@mui/material";
+import {Card, CardActionArea, CardActions, CardContent, CardMedia, Checkbox} from "@mui/material";
 import {Favorite, FavoriteBorder} from "@mui/icons-material";
 import BoardService from "../services/BoardService";
 import Menu from "@mui/material/Menu";

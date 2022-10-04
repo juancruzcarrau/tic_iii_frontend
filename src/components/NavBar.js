@@ -16,7 +16,7 @@ import '../App.css';
 import {useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
 import BoardService from "../services/BoardService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
