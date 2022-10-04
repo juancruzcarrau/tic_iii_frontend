@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -40,8 +40,15 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         }
     }
 
+    const [openDialog, setOpenDialog] = React.useState(false);
+
+    const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
     const navigate = useNavigate();
+
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const user = UserService.getCurrentUser();
 
     function logout() {
         UserService.logOut();
@@ -57,11 +64,6 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         reset();
     };
 
-    const [openDialog, setOpenDialog] = React.useState(false);
-
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
-
-
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
@@ -69,10 +71,6 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null)
     }
-
-    const [anchorElUser, setAnchorElUser] = useState(null);
-
-    const user = UserService.getCurrentUser();
 
     const handleCreate = (data) => {
         setOpenDialog(false);
@@ -82,7 +80,6 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         });
         reset();
     }
-
 
     return (
         <AppBar position="sticky">

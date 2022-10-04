@@ -2,11 +2,20 @@ import React, {useState} from 'react';
 import NavBar from "./NavBar";
 import HomePage from "./HomePage";
 import {Navigate, Route, Routes} from "react-router-dom";
+import Board from "./Board";
+import Box from "@mui/material/Box";
 
 const MainPage = () => {
 
-    const [tableCreated, setTableCreated] = useState(false);
+    const styles = {
+        mainPage: {
+            minHeight: "100%",
+            height: "100%",
+            backgroundColor: "#ebedf2"
+        }
+    }
 
+    const [tableCreated, setTableCreated] = useState(false);
     const [show, setShow] = useState("all")
 
     function showFavorites(){
@@ -18,14 +27,14 @@ const MainPage = () => {
     }
 
     return (
-        <div>
+        <Box sx={styles.mainPage}>
             <NavBar dialogFunction={() => setTableCreated} tableCreated={tableCreated} setFavorites={() => showFavorites()} closeFavorites={() => closeFavorites()}/>
             <Routes>
                 <Route path='/' element={ <Navigate to="/home" /> }/>
                 <Route path="/home" element={<HomePage tableCreated={tableCreated} show={show}/>}/>
-                <Route path="/board/:id"/>
+                <Route path="/board/:id" element={<Board/>}/>
             </Routes>
-        </div>
+        </Box>
     );
 };
 
