@@ -14,16 +14,17 @@ import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import TableService from "../services/TableService";
 import UserService from "../services/AuthentictionService";
+import {FilePicker} from "@apideck/file-picker";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) => {
+const NavBar = ({tableCreated, setFavorites, closeFavorites}) => {
 
     const styles = {
         buttonArea: {
@@ -73,19 +74,26 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
 
     const [anchorElUser, setAnchorElUser] = useState(null);
 
-
+    const [file, setFile] = useState(null);
 
     const user = UserService.getCurrentUser();
 
     const handleCreate = (data) => {
         setOpenDialog(false);
-        data["mailUsuario"] = user.email;
-        TableService.create(data).then(r => {
-            dialogFunction(!tableCreated);
-        });
+        const formData = new FormData()
+        formData.append('mailUsuario', user.email);
+        formData.append('nombre', data.nombre);
+        formData.append('imagen', file);
+
+        TableService.create(formData).then(tableCreated);
+        setFile(null);
         reset();
     }
 
+
+    const changeFile = (event) => {
+        setFile(event.target.files[0]);
+    }
 
     return (
         <AppBar position="sticky">
@@ -186,6 +194,11 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                                     type="text"
                                     fullWidth
                                 />
+                                <Input
+                                    onChange={(e) => changeFile(e)}
+                                    type="file"
+                                    fullWidth
+                                    />
                                 <DialogActions sx={styles.buttonCreate}>
                                     <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
                                     <Button variant="contained" type="submit">Create</Button>

@@ -9,6 +9,10 @@ const MainPage = () => {
 
     const [show, setShow] = useState("all")
 
+    function tableCreatedFunc(){
+        setTableCreated(!tableCreated)
+    }
+
     function showFavorites(){
      setShow("favorites");
     }
@@ -19,7 +23,7 @@ const MainPage = () => {
 
     return (
         <div>
-            <NavBar dialogFunction={() => setTableCreated} tableCreated={tableCreated} setFavorites={() => showFavorites()} closeFavorites={() => closeFavorites()}/>
+            <NavBar tableCreated={() => tableCreatedFunc()} setFavorites={() => showFavorites()} closeFavorites={() => closeFavorites()}/>
             <HomePage tableCreated={tableCreated} show={show}/>
         </div>
     );

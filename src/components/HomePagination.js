@@ -30,7 +30,7 @@ const HomePagination = ({setTables, tableCreated, tableChange, type}) => {
                     setTables(res.data);
                 })
         }
-    }, [pagination.from, pagination.to, tableCreated, tableChange, type]);
+    }, [tableCreated ,pagination.from, pagination.to, tableChange, type]);
 
     const handlePageChange = (event, page) => {
         setPagination({...pagination, from:(page-1)});
