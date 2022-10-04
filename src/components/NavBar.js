@@ -74,12 +74,13 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
 
     const handleCreate = (data) => {
         setOpenDialog(false);
-        data["mailUsuario"] = user.email;
+        data = {...data, mailUsuario: user.email};
         BoardService.create(data).then(r => {
             dialogFunction(!tableCreated);
         });
         reset();
     }
+
 
     return (
         <AppBar position="sticky">
