@@ -46,9 +46,9 @@ const Login = () => {
         setSuccessMsg("Successfully signed up");
     }
 
-    //useEffect(() => {
-    //    emailRef.current.focus();
-    //}, [])
+    useEffect(() => {
+       emailRef.current.focus();
+    }, [])
 
     useEffect(() => {
         setErrMsg('');
@@ -89,7 +89,6 @@ const Login = () => {
 
             <form noValidate autoComplete="off" onSubmit={handleSubmit(authenticateUser)}>
                 <TextField
-                    autoFocus
                     label="Email"
                     variant="outlined"
                     inputRef={emailRef}

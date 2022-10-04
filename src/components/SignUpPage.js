@@ -40,13 +40,20 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog, setSuccess}) => {
 
     const handleCreate = (data) => {
         if (data.password1 === data.password2) {
-            handleCloseDialog(false);
+            //handleCloseDialog(false);
             const newUser = {nombre: data.name, email: data.email, contrasena: data.password1};
             UserService.signup(newUser).then(r => {
                 handleCloseDialog(!isDialogOpened);
                 setSuccess(true);
+                reset();
+            }).catch(error => {
+                if (error.request.status === 409) {
+                    setErrMsg("Email already used")
+                } else {
+                    setErrMsg("An unexpected error has occurred.")
+                    console.log(error)
+                }
             });
-            reset();
         } else {
             setErrMsg("Passwords do not match")
         }
