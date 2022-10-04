@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -82,7 +82,6 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         });
         reset();
     }
-
 
     return (
         <AppBar position="sticky">

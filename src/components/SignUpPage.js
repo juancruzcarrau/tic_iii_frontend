@@ -40,7 +40,9 @@ const SignUpPage = ({ isDialogOpened, handleCloseDialog }) => {
     const handleCreate = (data) => {
         if (data.password1 === data.password2) {
             handleCloseDialog(false);
-            console.log(data);
+            const newUser = {name: data.name, email: data.email, password: data.password1};
+            console.log(newUser);
+            reset();
         } else {
             setErrMsg("Passwords do not match")
         }

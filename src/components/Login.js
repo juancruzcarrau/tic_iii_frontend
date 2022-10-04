@@ -1,5 +1,5 @@
 import {useRef, useState, useEffect} from "react";
-import {Alert, Button, Collapse, TextField} from "@mui/material";
+import {Alert, Button, Collapse, InputAdornment, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
 import UserService from "../services/UserService";
@@ -53,7 +53,7 @@ const Login = () => {
 
         setErrMsg("");
 
-        UserService.signup(data)
+        UserService.authenticate(data)
             .then(res => {
                 navigate('/home')})
             .catch(error => {
