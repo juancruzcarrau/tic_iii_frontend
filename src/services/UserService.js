@@ -18,6 +18,18 @@ const UserService = {
         }
     },
 
+    signup: async (data) => {
+
+        return await axios.post(process.env.REACT_APP_BACKEND_URL + "/usuarios/signup", data)
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
+
+    },
+
     getCurrentUser: () => {
         return JSON.parse(localStorage.getItem('currentUser')) //returns null if there is no current user
     },

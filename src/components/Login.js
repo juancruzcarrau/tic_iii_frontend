@@ -1,9 +1,12 @@
-import {useRef, useState, useEffect} from "react";
-import {Alert, Button, Collapse, TextField} from "@mui/material";
+import React, {useRef, useState, useEffect} from "react";
+import {Alert, Button, Collapse, InputAdornment, TextField} from "@mui/material";
 import {useForm} from "react-hook-form";
 import logo from "../misc/logo-sin-fondo.png";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
 import {useNavigate} from "react-router-dom";
+import SignUpPage from "./SignUpPage";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const Login = () => {
 
@@ -27,15 +30,29 @@ const Login = () => {
 
     const emailRef = useRef()
     const [errMsg, setErrMsg] = useState('');
+    const [successfulMsg, setSuccessMsg] = useState('');
+
+    const [DialogIsOpen, setDialogIsOpen] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
+    const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
+    const handleDialogOpen = () => {
+        setDialogIsOpen(!DialogIsOpen);
+    };
+
+    function sucessfulSignUp() {
+        setSuccessMsg("Successfully signed up");
+    }
 
     useEffect(() => {
-        emailRef.current.focus();
+       emailRef.current.focus();
     }, [])
 
     useEffect(() => {
         setErrMsg('');
     }, [])
-
 
     const authenticateUser = (data) => {
 
@@ -46,9 +63,9 @@ const Login = () => {
                 navigate('/home')})
             .catch(error => {
                 if (error.request.status === 401) {
-                    setErrMsg("Email o contraseña incorrecta.")
+                    setErrMsg("Invalid email or password. Try again.")
                 } else {
-                    setErrMsg("Ha ocurrido un error inesperado.")
+                    setErrMsg("An unexpected error has occurred.")
                     console.log(error)
                 }
             });
@@ -66,6 +83,10 @@ const Login = () => {
                 <Alert severity='error'>{errMsg}</Alert>
             </Collapse>
 
+            <Collapse in={successfulMsg.length !== 0} sx={styles.alert}>
+                <Alert severity='success'>{successfulMsg}</Alert>
+            </Collapse>
+
             <form noValidate autoComplete="off" onSubmit={handleSubmit(authenticateUser)}>
                 <TextField
                     label="Email"
@@ -81,13 +102,26 @@ const Login = () => {
                 <TextField
                     label="Password"
                     variant="outlined"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register(
                         "contrasena",
                         {required: 'Password required'})}
                     error={Boolean(errors.password)}
                     helperText={errors.password?.message}
                     sx={styles.field}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                >
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }}
                 />
 
                 <div style={styles.buttonArea}>
@@ -95,9 +129,13 @@ const Login = () => {
                         Log in
                     </Button>
 
-                    <Button variant="contained">
-                        Sign up
-                    </Button>
+                    <SignUpPage
+                        isDialogOpened={DialogIsOpen}
+                        handleCloseDialog={() => setDialogIsOpen(false)}
+                        setSuccess={() => sucessfulSignUp()}
+                    />
+                    <Button variant="contained" onClick={() => handleDialogOpen()}>Sign up</Button>
+
                 </div>
             </form>
         </div>

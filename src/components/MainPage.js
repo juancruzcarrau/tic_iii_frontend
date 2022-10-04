@@ -1,9 +1,19 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import NavBar from "./NavBar";
 import HomePage from "./HomePage";
-import UserService from "../services/AuthentictionService";
+import {Navigate, Route, Routes} from "react-router-dom";
+import Board from "./Board";
+import Box from "@mui/material/Box";
 
 const MainPage = () => {
+
+    const styles = {
+        mainPage: {
+            minHeight: "100%",
+            height: "100%",
+            backgroundColor: "#ebedf2"
+        }
+    }
 
     const [tableCreated, setTableCreated] = useState(false);
 
@@ -22,10 +32,14 @@ const MainPage = () => {
     }
 
     return (
-        <div>
+        <Box sx={styles.mainPage}>
             <NavBar tableCreated={() => tableCreatedFunc()} setFavorites={() => showFavorites()} closeFavorites={() => closeFavorites()}/>
-            <HomePage tableCreated={tableCreated} show={show}/>
-        </div>
+            <Routes>
+                <Route path='/' element={ <Navigate to="/home" /> }/>
+                <Route path="/home" element={<HomePage tableCreated={tableCreated} show={show}/>}/>
+                <Route path="/board/:id" element={<Board/>}/>
+            </Routes>
+        </Box>
     );
 };
 

@@ -14,17 +14,16 @@ import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
+import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
-import TableService from "../services/TableService";
-import UserService from "../services/AuthentictionService";
-import {FilePicker} from "@apideck/file-picker";
+import {Dialog, DialogActions, DialogContent, DialogTitle, Slide, TextField} from "@mui/material";
+import BoardService from "../services/BoardService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({tableCreated, setFavorites, closeFavorites}) => {
+const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) => {
 
     const styles = {
         buttonArea: {
@@ -41,12 +40,15 @@ const NavBar = ({tableCreated, setFavorites, closeFavorites}) => {
         }
     }
 
+    const [openDialog, setOpenDialog] = React.useState(false);
+
+    const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
     const navigate = useNavigate();
 
     function logout() {
         UserService.logOut();
-        navigate('/')
+        navigate('/login')
     }
 
     function handleClickCreateOpen() {
@@ -57,11 +59,6 @@ const NavBar = ({tableCreated, setFavorites, closeFavorites}) => {
         setOpenDialog(false);
         reset();
     };
-
-    const [openDialog, setOpenDialog] = React.useState(false);
-
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
-
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -85,7 +82,7 @@ const NavBar = ({tableCreated, setFavorites, closeFavorites}) => {
         formData.append('nombre', data.nombre);
         formData.append('imagen', file);
 
-        TableService.create(formData).then(tableCreated);
+        BoardService.create(formData).then(tableCreated);
         setFile(null);
         reset();
     }

@@ -3,7 +3,7 @@ import {Box, Drawer, Pagination, Paper, styled} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import TableCard from "./TableCard";
 import HomePagination from "./HomePagination";
-import UserService from "../services/AuthentictionService";
+import UserService from "../services/UserService";
 
 
 const HomePage = ({tableCreated, show}) => {
@@ -36,7 +36,7 @@ const HomePage = ({tableCreated, show}) => {
                     height: "60vh"
                         }}>
                 <Grid2 sx={style.container} container spacing={2}>
-                    {tables.map((element, index) => {
+                    {tables.map((element) => {
                         return <Grid2 xs={3} key={element.id} sx={style.element}> <TableCard tablero={element} tableChange={setTableChange}/> </Grid2>
                     })}
                 </Grid2>

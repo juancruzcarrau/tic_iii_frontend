@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import Typography from "@mui/material/Typography";
 import {Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Checkbox} from "@mui/material";
+import {Card, CardActionArea, CardActions, CardContent, Checkbox} from "@mui/material";
 import {Favorite, FavoriteBorder} from "@mui/icons-material";
-import TableService from "../services/TableService";
-import login from "./Login";
+import BoardService from "../services/BoardService";
 import Menu from "@mui/material/Menu";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -42,7 +42,7 @@ const TableCard = ({tablero, tableChange}) => {
     function handleFavoriteChange() {
         tablero.favorito = !tablero.favorito;
         console.log(tablero)
-        TableService.update(tablero).then(res => {
+        BoardService.update(tablero).then(res => {
                 setFavorito(res.favorito)
             }
         )
