@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Typography from "@mui/material/Typography";
-import {Card, CardActionArea, CardActions, CardContent, Checkbox} from "@mui/material";
+import {Card, CardActionArea, CardActions, CardContent, CardMedia, Checkbox} from "@mui/material";
 import {Favorite, FavoriteBorder} from "@mui/icons-material";
 import BoardService from "../services/BoardService";
 import Menu from "@mui/material/Menu";
@@ -49,17 +49,17 @@ const TableCard = ({tablero, tableChange}) => {
 
     return (
         <Card sx={{ minHeight: "120px",
-                    maxHeight: "180px"}} raised={true}>
+                    maxHeight: "35vh"}} raised={true}>
             <CardActionArea>
+                {tablero.imagenTableroDto?<CardMedia
+                    component="img"
+                    height="140"
+                    image={`data:image/jpeg;base64,${tablero.imagenTableroDto.foto}`}
+                    alt="image"
+                />:<></>}
                 <CardContent>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        Table
-                    </Typography>
                     <Typography variant="h5" component="div">
                         {tablero.nombre}
-                    </Typography>
-                    <Typography sx={{ mb: 0.5 }} color="text.secondary">
-                        Last modification: {tablero.fechaModificacion[2]}-{tablero.fechaModificacion[1]}-{tablero.fechaModificacion[0]}
                     </Typography>
                 </CardContent>
                 <CardActions sx={style.buttonAction}>
