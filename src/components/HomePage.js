@@ -4,9 +4,10 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import TableCard from "./TableCard";
 import HomePagination from "./HomePagination";
 import UserService from "../services/UserService";
+import {useParams} from "react-router-dom";
 
 
-const HomePage = ({tableCreated, show}) => {
+const HomePage = ({tableCreated}) => {
 
     const style = {
         container: {
@@ -22,6 +23,8 @@ const HomePage = ({tableCreated, show}) => {
     const [tables, setTables] = useState([]);
 
     const user = UserService.getCurrentUser()
+
+    const { type } = useParams();
 
     const [tableChange, setTableChange] = useState(false);
 
@@ -48,7 +51,7 @@ const HomePage = ({tableCreated, show}) => {
                 </Grid2>
             </Box>
             <Box>
-                <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange} type={show}/>
+                <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange} type={type}/>
             </Box>
         </div>
     );

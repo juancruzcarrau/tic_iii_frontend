@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuItem from "@mui/material/MenuItem";
 import {AspectRatio, CardCover, Link} from "@mui/joy";
+import {useNavigate} from "react-router-dom";
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -22,12 +23,13 @@ const TableCard = ({tablero, tableChange}) => {
             minHeight: "5hv",
             width: "35%",
         },
-        card: { minHeight: "120px",
-                height: "85%",
+        card: { height: "190px",
                 maxHeight: "22vh",
                 borderRadius: "10px",
         }
     })
+
+    const navigate = useNavigate();
 
     const [favorito, setFavorito] = useState(tablero.favorito);
 
@@ -51,47 +53,51 @@ const TableCard = ({tablero, tableChange}) => {
         BoardService.update(tablero).then(tableChange)
     }
 
+
+    function handleClickTable() {
+        navigate('/board/' + tablero.id);
+    }
+
     return (
         <Card sx={style.card} elevation={2}>
-            <CardActionArea>
+            <CardActionArea onClick={handleClickTable}>
                 {tablero.imagenTableroDto?<CardMedia
                     sx={{maxHeight: "14vh"}}
                     component="img"
                     image={`data:image/jpeg;base64,${tablero.imagenTableroDto.foto}`}
                     alt="image"
                 />:<></>}
-
-                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "60%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }}>
-                        {tablero.nombre}
-                    </Typography>
-                    <CardActions sx={style.buttonAction}>
-                        <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={favorito} onChange={handleFavoriteChange}/>
-
-                        <IconButton
-                            aria-label="more"
-                            id="long-button"
-                            aria-controls={open ? 'long-menu' : undefined}
-                            aria-expanded={open ? 'true' : undefined}
-                            aria-haspopup="true"
-                            onClick={handleClick}
-                        >
-                            <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                            id="long-menu"
-                            MenuListProps={{
-                                'aria-labelledby': 'long-button',
-                            }}
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
-                        >
-                            <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}>Store</MenuItem>
-                        </Menu>
-                    </CardActions>
-                </Box>
             </CardActionArea>
+            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "60%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }}>
+                    {tablero.nombre}
+                </Typography>
+                <CardActions sx={style.buttonAction}>
+                    <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={favorito} onChange={handleFavoriteChange}/>
+
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={open ? 'long-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                    >
+                        <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="long-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}>Store</MenuItem>
+                    </Menu>
+                </CardActions>
+            </Box>
         </Card>
     );
 };

@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
@@ -23,7 +23,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) => {
+const NavBar = ({dialogFunction, tableCreated}) => {
 
     const styles = {
         buttonArea: {
@@ -36,7 +36,7 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
             display: "flex",
             justifyContent: "space-between",
             marginBottom: "10px",
-            marginTop: "10px"
+            marginTop: "10px",
         },
         fileUpload: {
             marginTop: "20px"
@@ -67,12 +67,22 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         setAnchorElUser(event.currentTarget);
     };
 
+    const handleOpenMenu = (event) => {
+        setAnchorElUser1(event.currentTarget);
+    };
 
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null)
     }
 
+    const handleCloseMenu = (event) => {
+        setAnchorElUser1(null)
+    }
+
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const [anchorElUser1, setAnchorElUser1] = useState(null);
+
 
     const [file, setFile] = useState(null);
 
@@ -95,11 +105,36 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         setFile(event.target.files[0]);
     }
 
+    function handleClickHome() {
+        navigate('home');
+    }
+
+    function handleClickFavorites() {
+        navigate('favorites');
+    }
+
+    function HandleHomeMenu() {
+        handleClickHome();
+        handleCloseMenu();
+    }
+
+    function HandleFavoriteMenu() {
+        handleClickFavorites();
+        handleCloseMenu();
+    }
+
+    function handleCreateMenu() {
+        handleCloseMenu();
+        handleClickCreateOpen();
+    }
+
     return (
         <AppBar position="sticky">
             <Container maxWidth="100vh">
                 <Toolbar disableGutters>
-                    <img src={logo} alt="logo" style={{width: "50px"}}/>
+                    <Link to={"/home"}>
+                        <img src={logo} alt="logo" style={{width: "50px"}}/>
+                    </Link>
                     <Typography
                         variant="h6"
                         noWrap
@@ -123,28 +158,39 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             color="inherit"
+                            onClick={handleOpenMenu}
                         >
                             <MenuIcon />
                         </IconButton>
-                        {/*<Menu*/}
-                        {/*    id="menu-appbar"*/}
-                        {/*    anchorOrigin={{*/}
-                        {/*        vertical: 'bottom',*/}
-                        {/*        horizontal: 'left',*/}
-                        {/*    }}*/}
-                        {/*    keepMounted*/}
-                        {/*    transformOrigin={{*/}
-                        {/*        vertical: 'top',*/}
-                        {/*        horizontal: 'left',*/}
-                        {/*    }}*/}
-                        {/*    sx={{*/}
-                        {/*        display: { xs: 'block', md: 'none' },*/}
-                        {/*    }}*/}
-                        {/*>*/}
-                        {/*    <MenuItem onClick={handleCloseUserMenu}>*/}
-                        {/*        <Typography textAlign="center">Logout</Typography>*/}
-                        {/*    </MenuItem>*/}
-                        {/*</Menu>*/}
+                        <Menu
+                            id="menu-appbar"
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            sx={{
+                                display: { xs: 'block', md: 'none' },
+                            }}
+                            open={Boolean(anchorElUser1)}
+                            anchorEl={anchorElUser1}
+                            onClose={handleCloseMenu}
+                        >
+                            <MenuItem onClick={HandleHomeMenu}>
+                                <Typography textAlign="center">Boards</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={HandleFavoriteMenu}>
+                                <Typography textAlign="center">Favorites</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={handleCreateMenu}>
+                                Create
+                            </MenuItem>
+
+                        </Menu>
                     </Box>
                     <Typography
                         variant="h5"
@@ -162,10 +208,10 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                         Thorus
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <Button sx={styles.buttonArea} variant="text" onClick={closeFavorites}>
-                            Workspaces
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickHome}>
+                            Boards
                         </Button>
-                        <Button sx={styles.buttonArea} variant="text" onClick={setFavorites}>
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickFavorites}>
                             Favorites
                         </Button>
                         <Button sx={styles.buttonArea} variant="text">
@@ -201,10 +247,10 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                                     accept="image/png, image/jpeg"
                                     multiple={false}
                                     />
-                                <DialogActions sx={styles.buttonCreate}>
+                                <Box sx={styles.buttonCreate}>
                                     <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
                                     <Button variant="contained" type="submit">Create</Button>
-                                </DialogActions>
+                                </Box>
                             </form>
                         </DialogContent>
 
