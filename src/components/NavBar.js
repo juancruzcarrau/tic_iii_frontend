@@ -18,6 +18,7 @@ import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
 import BoardService from "../services/BoardService";
+import ProfilePage from "./ProfilePage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -51,9 +52,8 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         navigate('/login')
     }
 
-    function editProfile() {
-        UserService.editProfile();
-        navigate('/editprofile')
+    function profile() {
+        navigate(`/profile/${user.id}`)
     }
 
     function handleClickCreateOpen() {
@@ -144,7 +144,7 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                         {/*    }}*/}
                         {/*>*/}
                         {/*    <MenuItem onClick={handleCloseUserMenu}>*/}
-                        {/*        <Typography textAlign="center">Edit profile</Typography>*/}
+                        {/*        <Typography textAlign="center">Profile</Typography>*/}
                         {/*    </MenuItem>*/}
                         {/*    <MenuItem onClick={handleCloseUserMenu}>*/}
                         {/*        <Typography textAlign="center">Logout</Typography>*/}
@@ -236,8 +236,8 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                          >
-                            <MenuItem onClick={editProfile}>
-                                <Typography textAlign="center">Edit profile</Typography>
+                            <MenuItem onClick={profile}>
+                                <Typography textAlign="center">Profile</Typography>
                             </MenuItem>
                             <MenuItem onClick={logout}>
                                 <Typography textAlign="center">Logout</Typography>

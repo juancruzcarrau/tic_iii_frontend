@@ -4,6 +4,7 @@ import HomePage from "./HomePage";
 import {Navigate, Route, Routes} from "react-router-dom";
 import Board from "./Board";
 import Box from "@mui/material/Box";
+import ProfilePage from "./ProfilePage";
 
 const MainPage = () => {
 
@@ -38,6 +39,7 @@ const MainPage = () => {
                 <Route path='/' element={ <Navigate to="/home" /> }/>
                 <Route path="/home" element={<HomePage tableCreated={tableCreated} show={show}/>}/>
                 <Route path="/board/:id" element={<Board/>}/>
+                <Route path="/profile/:id" element={<ProfilePage/>}/>
             </Routes>
         </Box>
     );
