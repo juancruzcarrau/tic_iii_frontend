@@ -7,6 +7,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Button from "@mui/material/Button";
 import List from "./List";
+import {Paper} from "@mui/material";
+import DivisorLine from "./DivisorLine";
 
 const Board = () => {
 
@@ -14,19 +16,21 @@ const Board = () => {
         mainFlex: {
             display: "flex",
             width: "calc(100% - 2*15)",
-            minHeight: "calc(100% - 15px - 10px)", // 100 - paddingBottom - paddingTop - Navbar height
+            maxHeight: "calc(100% - 15px - 10px)", // 100 - paddingBottom - paddingTop - Navbar height
+            minHeight: "calc(100% - 15px - 10px)",
             padding: "15px",
             paddingTop: "10px",
             flexDirection: "column",
-            rowGap: "5px"
+            gap: "10px"
         },
         topBar: {
             display: "flex",
-            width: "calc(100% - 2*5px)",
+            width: "calc(100% - 2*15px)",
             textAlign:"left",
-            padding: "5px",
+            padding: "5px 15px 5px",
             alignItems: "center",
-            gap: "10px",
+            borderRadius: "10px",
+            backgroundColor: "rgb(255,255,255, 0.8)",
         },
         listsContainer: {
             display: "flex",
@@ -35,15 +39,15 @@ const Board = () => {
             justifyContent: "flexStart",
             overflowX:"auto",
             columnGap: "10px",
-            maxHeight: "100%"
+            minHeight: "100%"
         },
         favouriteButton: {
             minWidth:0,
             minHeight: 0,
             padding: "5px",
-            backgroundColor: '#e1e2e6',
+            backgroundColor: 'rgb(0, 0, 0, 0)',
             '&:hover':{
-                backgroundColor: '#BABFCB'
+                backgroundColor: 'rgb(0, 0, 0, 0.1)'
             }
         },
         listaBox: {
@@ -58,31 +62,50 @@ const Board = () => {
     const [board, setBoard] = useState({listas: []});
     const ref = useRef(null);
 
-    useEffect(() => {
+    useEffect( () => {
         getBoardData();
         mainFlexHeightAdjustment();
+        // setBackgroundImage()
+
     }, [])
+
+    useEffect(() => {
+    }, [board])
 
     const getBoardData = () => {
         BoardService.getById(id)
             .then(board => {
                 setBoard(board)
-                console.log(board)
+                setBackgroundImage(board)
             })
             .catch(error => console.log(error))
     }
     const mainFlexHeightAdjustment = () => {
         let copy = styles;
         const offsetTop = ref.current.offsetTop;
-        copy.mainFlex = {...copy.mainFlex, minHeight: "calc(100% - 15px - 10px - " + offsetTop + "px)"}
+        const newHeight = "calc(100% - 15px - 10px - " + offsetTop + "px)"
+        copy.mainFlex = {...copy.mainFlex, minHeight: newHeight, maxHeight: newHeight}
+        setStyles(copy)
+    }
+    const setBackgroundImage = (board) => {
+        let copy = styles;
+        const imageUrl = `url(\"data:image/jpeg;base64,${board.imagenTableroDto.foto}\")`
+        copy.mainFlex = {...copy.mainFlex,
+            backgroundImage: imageUrl,
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+        }
         setStyles(copy)
     }
 
     return(
         <Box sx={styles.mainFlex} ref={ref}>
 
-            <Box sx={styles.topBar}>
-                <Typography variant="h5" sx={{fontWeight: 700}}>{board.nombre}</Typography>
+            <Paper sx={styles.topBar}>
+                <Typography variant="h5" sx={{fontWeight: 700, marginRight: "5px"}}>{board.nombre}</Typography>
+
+                <DivisorLine color={"rgb(0,0,0,0.7)"} size={"20px"}/>
+
                 <Button variant="filled" sx={styles.favouriteButton}>
                     {board.favorito ? (
                         <FavoriteIcon/>
@@ -90,13 +113,13 @@ const Board = () => {
                         <FavoriteBorderIcon/>
                     )}
                 </Button>
-            </Box>
+            </Paper>
 
             <div style={styles.listsContainer}>
                 {board.listas.map((list) => {
                     return(
-                        <Box sx={styles.listaBox}>
-                            <List key={list.posicion} data={list}/>
+                        <Box sx={styles.listaBox} key={list.posicion}>
+                            <List listData={list}/>
                         </Box>
                     )
                 })}
