@@ -18,26 +18,18 @@ const MainPage = () => {
 
     const [tableCreated, setTableCreated] = useState(false);
 
-    const [show, setShow] = useState("all")
 
     function tableCreatedFunc(){
         setTableCreated(!tableCreated)
     }
 
-    function showFavorites(){
-     setShow("favorites");
-    }
-
-    function closeFavorites(){
-        setShow("all")
-    }
 
     return (
         <Box sx={styles.mainPage}>
-            <NavBar tableCreated={() => tableCreatedFunc()} setFavorites={() => showFavorites()} closeFavorites={() => closeFavorites()}/>
+            <NavBar tableCreated={() => tableCreatedFunc()}/>
             <Routes>
                 <Route path='/' element={ <Navigate to="/home" /> }/>
-                <Route path="/home" element={<HomePage tableCreated={tableCreated} show={show}/>}/>
+                <Route path="/:type" element={<HomePage tableCreated={tableCreated} />}/>
                 <Route path="/board/:id" element={<Board/>}/>
                 <Route path="/profile/:id" element={<ProfilePage/>}/>
             </Routes>
