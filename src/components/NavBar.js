@@ -37,6 +37,9 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
             justifyContent: "space-between",
             marginBottom: "10px",
             marginTop: "10px"
+        },
+        fileUpload: {
+            marginTop: "20px"
         }
     }
 
@@ -191,10 +194,12 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                                     type="text"
                                     fullWidth
                                 />
-                                <Input
+                                <input
+                                    className={styles.fileUpload}
                                     onChange={(e) => changeFile(e)}
                                     type="file"
-                                    fullWidth
+                                    accept="image/png, image/jpeg"
+                                    multiple={false}
                                     />
                                 <DialogActions sx={styles.buttonCreate}>
                                     <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
