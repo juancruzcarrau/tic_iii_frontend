@@ -73,7 +73,7 @@ const TableCard = ({tablero, tableChange}) => {
                 />:<></>}
             </CardActionArea>
             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "60%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }}>
+                <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "80%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }} noWrap>
                     {tablero.nombre}
                 </Typography>
                 <CardActions sx={style.buttonAction}>

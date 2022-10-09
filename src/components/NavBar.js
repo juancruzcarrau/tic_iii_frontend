@@ -16,8 +16,20 @@ import '../App.css';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
+import {
+    Alert,
+    Collapse,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle, Fade,
+    Input,
+    Slide,
+    TextField
+} from "@mui/material";
 import BoardService from "../services/BoardService";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import RecentTableCard from "./RecentTableCard";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -49,6 +61,8 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
     const navigate = useNavigate();
 
+    const [errMsg, setErrMsg] = useState(false);
+
     function logout() {
         UserService.logOut();
         navigate('/login')
@@ -60,6 +74,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
     const handleCreateDialogClose = () => {
         setOpenDialog(false);
+        setErrMsg(false);
         reset();
     };
 
@@ -83,21 +98,41 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
     const [anchorElUser1, setAnchorElUser1] = useState(null);
 
+    const [recentTables, setRecentTables] = useState(null);
+
 
     const [file, setFile] = useState(null);
 
     const user = UserService.getCurrentUser();
 
+    const [anchorEl2, setAnchorEl2] = React.useState(null);
+    const open = Boolean(anchorEl2);
+    const handleClickRecent = (event) => {
+        BoardService.getRecent(user.email).then(res => {
+            setRecentTables(res);
+        })
+        setAnchorEl2(event.currentTarget);
+    };
+    const handleCloseRecent = () => {
+        setAnchorEl2(null);
+    };
+
     const handleCreate = (data) => {
-        setOpenDialog(false);
         const formData = new FormData()
         formData.append('mailUsuario', user.email);
         formData.append('nombre', data.nombre);
         formData.append('imagen', file);
 
-        BoardService.create(formData).then(tableCreated);
-        setFile(null);
-        reset();
+        BoardService.create(formData).then(() => {
+            tableCreated()
+            setOpenDialog(false);
+            setFile(null);
+            reset();
+        }).catch(error => {
+            if (error.request.status === 500){
+                setErrMsg(true);
+            }
+        });
     }
 
 
@@ -214,9 +249,33 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                         <Button sx={styles.buttonArea} variant="text" onClick={handleClickFavorites}>
                             Favorites
                         </Button>
-                        <Button sx={styles.buttonArea} variant="text">
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickRecent} endIcon={<KeyboardArrowDownIcon />}>
                             Recent
                         </Button>
+                        <Menu
+                            id="fade-menu"
+                            MenuListProps={{
+                                'aria-labelledby': 'fade-button',
+                            }}
+                            anchorEl={anchorEl2}
+                            open={open}
+                            onClose={handleCloseRecent}
+                            TransitionComponent={Fade}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <Box style={{ width: "13vw",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
+                                {recentTables ? recentTables.map((element) => {
+                                    return <RecentTableCard key={element.id} table={element} click={handleCloseRecent}/>
+                                }): <></>}
+                            </Box>
+                        </Menu>
                         <Button sx={styles.buttonArea} variant="text" onClick={handleClickCreateOpen}>
                             Create
                         </Button>
@@ -224,6 +283,9 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
                     <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition}>
                         <DialogTitle>Create Table</DialogTitle>
+                        <Collapse in={errMsg}>
+                            <Alert severity='error'>There was an unexpected error</Alert>
+                        </Collapse>
                         <DialogContent>
                             <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
                                 <TextField
