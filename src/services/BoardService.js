@@ -52,6 +52,16 @@ const BoardService = {
             .catch(error => {
                 throw error;
             })
+    },
+
+    getRecent: async (data) => {
+        return await axios.get(process.env.REACT_APP_BACKEND_URL + "/tableros/top/recientes", {params: {email: data}})
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
     }
 }
 
