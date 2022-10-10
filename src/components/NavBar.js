@@ -13,17 +13,29 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
-import {Dialog, DialogActions, DialogContent, DialogTitle, Input, Slide, TextField} from "@mui/material";
+import {
+    Alert,
+    Collapse,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle, Fade,
+    Input,
+    Slide,
+    TextField
+} from "@mui/material";
 import BoardService from "../services/BoardService";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import RecentTableCard from "./RecentTableCard";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) => {
+const NavBar = ({dialogFunction, tableCreated}) => {
 
     const styles = {
         buttonArea: {
@@ -36,7 +48,10 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
             display: "flex",
             justifyContent: "space-between",
             marginBottom: "10px",
-            marginTop: "10px"
+            marginTop: "10px",
+        },
+        fileUpload: {
+            marginTop: "20px"
         }
     }
 
@@ -45,6 +60,8 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
     const navigate = useNavigate();
+
+    const [errMsg, setErrMsg] = useState(false);
 
     function logout() {
         UserService.logOut();
@@ -57,6 +74,7 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
 
     const handleCreateDialogClose = () => {
         setOpenDialog(false);
+        setErrMsg(false);
         reset();
     };
 
@@ -64,27 +82,57 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         setAnchorElUser(event.currentTarget);
     };
 
+    const handleOpenMenu = (event) => {
+        setAnchorElUser1(event.currentTarget);
+    };
 
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null)
     }
 
+    const handleCloseMenu = (event) => {
+        setAnchorElUser1(null)
+    }
+
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const [anchorElUser1, setAnchorElUser1] = useState(null);
+
+    const [recentTables, setRecentTables] = useState(null);
+
 
     const [file, setFile] = useState(null);
 
     const user = UserService.getCurrentUser();
 
+    const [anchorEl2, setAnchorEl2] = React.useState(null);
+    const open = Boolean(anchorEl2);
+    const handleClickRecent = (event) => {
+        BoardService.getRecent(user.email).then(res => {
+            setRecentTables(res);
+        })
+        setAnchorEl2(event.currentTarget);
+    };
+    const handleCloseRecent = () => {
+        setAnchorEl2(null);
+    };
+
     const handleCreate = (data) => {
-        setOpenDialog(false);
         const formData = new FormData()
         formData.append('mailUsuario', user.email);
         formData.append('nombre', data.nombre);
         formData.append('imagen', file);
 
-        BoardService.create(formData).then(tableCreated);
-        setFile(null);
-        reset();
+        BoardService.create(formData).then(() => {
+            tableCreated()
+            setOpenDialog(false);
+            setFile(null);
+            reset();
+        }).catch(error => {
+            if (error.request.status === 500){
+                setErrMsg(true);
+            }
+        });
     }
 
 
@@ -92,11 +140,36 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
         setFile(event.target.files[0]);
     }
 
+    function handleClickHome() {
+        navigate('home');
+    }
+
+    function handleClickFavorites() {
+        navigate('favorites');
+    }
+
+    function HandleHomeMenu() {
+        handleClickHome();
+        handleCloseMenu();
+    }
+
+    function HandleFavoriteMenu() {
+        handleClickFavorites();
+        handleCloseMenu();
+    }
+
+    function handleCreateMenu() {
+        handleCloseMenu();
+        handleClickCreateOpen();
+    }
+
     return (
         <AppBar position="sticky">
             <Container maxWidth="100vh">
                 <Toolbar disableGutters>
-                    <img src={logo} alt="logo" style={{width: "50px"}}/>
+                    <Link to={"/home"}>
+                        <img src={logo} alt="logo" style={{width: "50px"}}/>
+                    </Link>
                     <Typography
                         variant="h6"
                         noWrap
@@ -120,28 +193,39 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             color="inherit"
+                            onClick={handleOpenMenu}
                         >
                             <MenuIcon />
                         </IconButton>
-                        {/*<Menu*/}
-                        {/*    id="menu-appbar"*/}
-                        {/*    anchorOrigin={{*/}
-                        {/*        vertical: 'bottom',*/}
-                        {/*        horizontal: 'left',*/}
-                        {/*    }}*/}
-                        {/*    keepMounted*/}
-                        {/*    transformOrigin={{*/}
-                        {/*        vertical: 'top',*/}
-                        {/*        horizontal: 'left',*/}
-                        {/*    }}*/}
-                        {/*    sx={{*/}
-                        {/*        display: { xs: 'block', md: 'none' },*/}
-                        {/*    }}*/}
-                        {/*>*/}
-                        {/*    <MenuItem onClick={handleCloseUserMenu}>*/}
-                        {/*        <Typography textAlign="center">Logout</Typography>*/}
-                        {/*    </MenuItem>*/}
-                        {/*</Menu>*/}
+                        <Menu
+                            id="menu-appbar"
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            sx={{
+                                display: { xs: 'block', md: 'none' },
+                            }}
+                            open={Boolean(anchorElUser1)}
+                            anchorEl={anchorElUser1}
+                            onClose={handleCloseMenu}
+                        >
+                            <MenuItem onClick={HandleHomeMenu}>
+                                <Typography textAlign="center">Boards</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={HandleFavoriteMenu}>
+                                <Typography textAlign="center">Favorites</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={handleCreateMenu}>
+                                Create
+                            </MenuItem>
+
+                        </Menu>
                     </Box>
                     <Typography
                         variant="h5"
@@ -159,15 +243,39 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                         Thorus
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <Button sx={styles.buttonArea} variant="text" onClick={closeFavorites}>
-                            Workspaces
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickHome}>
+                            Boards
                         </Button>
-                        <Button sx={styles.buttonArea} variant="text" onClick={setFavorites}>
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickFavorites}>
                             Favorites
                         </Button>
-                        <Button sx={styles.buttonArea} variant="text">
+                        <Button sx={styles.buttonArea} variant="text" onClick={handleClickRecent} endIcon={<KeyboardArrowDownIcon />}>
                             Recent
                         </Button>
+                        <Menu
+                            id="fade-menu"
+                            MenuListProps={{
+                                'aria-labelledby': 'fade-button',
+                            }}
+                            anchorEl={anchorEl2}
+                            open={open}
+                            onClose={handleCloseRecent}
+                            TransitionComponent={Fade}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <Box style={{ width: "13vw",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
+                                {recentTables ? recentTables.map((element) => {
+                                    return <RecentTableCard key={element.id} table={element} click={handleCloseRecent}/>
+                                }): <></>}
+                            </Box>
+                        </Menu>
                         <Button sx={styles.buttonArea} variant="text" onClick={handleClickCreateOpen}>
                             Create
                         </Button>
@@ -175,6 +283,9 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
 
                     <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition}>
                         <DialogTitle>Create Table</DialogTitle>
+                        <Collapse in={errMsg}>
+                            <Alert severity='error'>There was an unexpected error</Alert>
+                        </Collapse>
                         <DialogContent>
                             <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
                                 <TextField
@@ -191,15 +302,17 @@ const NavBar = ({dialogFunction, tableCreated, setFavorites, closeFavorites}) =>
                                     type="text"
                                     fullWidth
                                 />
-                                <Input
+                                <input
+                                    className={styles.fileUpload}
                                     onChange={(e) => changeFile(e)}
                                     type="file"
-                                    fullWidth
+                                    accept="image/png, image/jpeg"
+                                    multiple={false}
                                     />
-                                <DialogActions sx={styles.buttonCreate}>
+                                <Box sx={styles.buttonCreate}>
                                     <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
                                     <Button variant="contained" type="submit">Create</Button>
-                                </DialogActions>
+                                </Box>
                             </form>
                         </DialogContent>
 

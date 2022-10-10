@@ -4,16 +4,19 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import TableCard from "./TableCard";
 import HomePagination from "./HomePagination";
 import UserService from "../services/UserService";
+import {useParams} from "react-router-dom";
 
 
-const HomePage = ({tableCreated, show}) => {
+const HomePage = ({tableCreated}) => {
 
     const style = {
         container: {
-            maxWidth: "90%"
+            maxWidth: "90%",
+            height: "50vh"
         },
         element: {
-            minWidth: "20vw"
+            minWidth: "20vw",
+            minHeight: "25vh"
         }
     }
 
@@ -21,11 +24,17 @@ const HomePage = ({tableCreated, show}) => {
 
     const user = UserService.getCurrentUser()
 
+    const { type } = useParams();
+
     const [tableChange, setTableChange] = useState(false);
+
+    function updateTable(){
+        setTableChange(!tableChange);
+    }
 
     return (
         <div>
-            <h1>Welcome {user.nombre}!</h1>
+            <h2>Welcome {user.nombre}!</h2>
             <h3>Tables:</h3>
             <Box sx={{
                     flexGrow: 1,
@@ -37,12 +46,12 @@ const HomePage = ({tableCreated, show}) => {
                         }}>
                 <Grid2 sx={style.container} container spacing={2}>
                     {tables.map((element) => {
-                        return <Grid2 xs={3} key={element.id} sx={style.element}> <TableCard tablero={element} tableChange={setTableChange}/> </Grid2>
+                        return <Grid2 xs={4} md={3} key={element.id} sx={style.element}> <TableCard tablero={element} tableChange={() => updateTable()}/> </Grid2>
                     })}
                 </Grid2>
             </Box>
             <Box>
-                <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange} type={show}/>
+                <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange} type={type}/>
             </Box>
         </div>
     );
