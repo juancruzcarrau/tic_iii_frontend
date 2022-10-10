@@ -4,36 +4,23 @@ import {
     Button,
     Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
     Grid,
-    InputAdornment, Paper,
+    InputAdornment,
     Table, TableBody,
     TableCell, TableContainer,
-    TableHead,
     TableRow,
     TextField
 } from "@mui/material";
 import {useForm} from "react-hook-form";
-import logo from "../misc/logo-sin-fondo.png";
 import UserService from "../services/UserService";
 import {useNavigate} from "react-router-dom";
-import SignUpPage from "./SignUpPage";
 import IconButton from "@mui/material/IconButton";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import * as PropTypes from "prop-types";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import logee from "../misc/logo-blanco-sin-fondo.png";
-import BoardService from "../services/BoardService";
 
 const ProfilePage = () => {
 
     const styles = {
-        field: {
-            color: "white",
-            marginBottom: "10px",
-            width: "100%"
-        },
         alert: {
             marginBottom: "10px",
         },
@@ -60,13 +47,17 @@ const ProfilePage = () => {
             paddingTop: "5%"
         },
         fileUpload: {
-            marginTop: "20px"
+            marginLeft: "100px",
+            marginTop: "40px"
+        },
+        fileUploadCancel: {
+            marginTop: "40px"
         }
     }
 
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
 
-    const [errMsg, setErrMsg] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
     const [successfulMsg, setSuccessMsg] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -76,7 +67,14 @@ const ProfilePage = () => {
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
+    const navigate = useNavigate();
+
     const user = UserService.getCurrentUser()
+
+    function logout() {
+        UserService.logOut();
+        navigate('/login')
+    }
 
     const handleEditDialogOpen = () => {
         setOpenEditDialog(true);
@@ -84,7 +82,7 @@ const ProfilePage = () => {
 
     const handleEditDialogClose = () => {
         setOpenEditDialog(false);
-        setErrMsg(false);
+        setErrMsg('');
         reset();
     };
 
@@ -94,7 +92,7 @@ const ProfilePage = () => {
 
     const handleFileDialogClose = () => {
         setOpenFileDialog(false);
-        setErrMsg(false);
+        setErrMsg('');
         reset();
     };
 
@@ -110,8 +108,6 @@ const ProfilePage = () => {
 
     }
 
-    const navigate = useNavigate();
-
     function createData(title, data) {
         return { title, data };
     }
@@ -120,11 +116,6 @@ const ProfilePage = () => {
         createData('Name:', user.nombre),
         createData('Email:', user.email)
     ];
-
-    function logout() {
-        UserService.logOut();
-        navigate('/login')
-    }
 
     return (
         <div>
@@ -250,8 +241,8 @@ const ProfilePage = () => {
                             }}
                         />
                         <DialogActions>
-                            <Button variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
-                            <Button variant="contained"  type="submit">Confirm changes</Button>
+                            <Button sx={styles.buttonArea} variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
+                            <Button sx={styles.buttonArea} variant="contained"  type="submit">Confirm changes</Button>
                         </DialogActions>
                     </form>
                 </DialogContent>
@@ -265,15 +256,14 @@ const ProfilePage = () => {
                 <DialogContent>
                     <form noValidate autoComplete="off" onSubmit={handleSubmit(handleFile)}>
                         <input
-                            className={styles.fileUpload}
                             onChange={(e) => changeFile(e)}
                             type="file"
                             accept="image/png, image/jpeg"
                             multiple={false}
                         />
                         <Box sx={styles.buttonCreate}>
-                            <Button variant="outlined" onClick={handleFileDialogClose}>Cancel</Button>
-                            <Button variant="contained" type="submit">Change picture</Button>
+                            <Button sx={styles.fileUploadCancel} variant="outlined" onClick={handleFileDialogClose}>Cancel</Button>
+                            <Button sx={styles.fileUpload} variant="contained" type="submit">Upload</Button>
                         </Box>
                     </form>
                 </DialogContent>
