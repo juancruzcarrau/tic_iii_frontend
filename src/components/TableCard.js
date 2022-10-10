@@ -49,13 +49,17 @@ const TableCard = ({tablero, tableChange}) => {
 
     function handleFavoriteChange() {
         tablero.favorito = !tablero.favorito;
-        console.log(tablero)
-        BoardService.update(tablero).then(tableChange)
+        BoardService.update(tablero).then(tableChange);
     }
 
 
     function handleClickTable() {
         navigate('/board/' + tablero.id);
+    }
+
+    function storeTable() {
+        tablero.archivado = true;
+        BoardService.update(tablero).then(tableChange);
     }
 
     return (
@@ -69,7 +73,7 @@ const TableCard = ({tablero, tableChange}) => {
                 />:<></>}
             </CardActionArea>
             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "60%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }}>
+                <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "80%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }} noWrap>
                     {tablero.nombre}
                 </Typography>
                 <CardActions sx={style.buttonAction}>
@@ -94,7 +98,7 @@ const TableCard = ({tablero, tableChange}) => {
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}>Store</MenuItem>
+                        <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}} onClick={storeTable}>Store</MenuItem>
                     </Menu>
                 </CardActions>
             </Box>
