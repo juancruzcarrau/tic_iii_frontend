@@ -31,13 +31,23 @@ const UserService = {
     },
 
     editProfile: async (data) => {
-        if (localStorage.getItem('currentUser') !== null){
+        return await axios.put(process.env.REACT_APP_BACKEND_URL + "/usuarios/editprofile", data)
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
+    },
 
-        // devolver el objeto usuario
-
-        } else {
-            throw Error('There is no current user authenticated.')
-        }
+    editProfilePicture: async (data) => {
+        return await axios.put(process.env.REACT_APP_BACKEND_URL + "/usuarios/editprofilepicture", data)
+            .then(res => {
+                return res.data;
+            })
+            .catch(error => {
+                throw error;
+            })
     },
 
     getCurrentUser: () => {

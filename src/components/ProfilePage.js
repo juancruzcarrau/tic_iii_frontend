@@ -1,9 +1,8 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Alert,
     Button,
-    Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
-    Grid,
+    Collapse, Dialog, DialogContent, DialogTitle,
     InputAdornment,
     Table, TableBody,
     TableCell, TableContainer,
@@ -17,6 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import BoardService from "../services/BoardService";
 
 const ProfilePage = () => {
 
@@ -28,6 +29,13 @@ const ProfilePage = () => {
             display: "flex",
             marginBottom: "10px",
             textAlign: "center"
+        },
+        buttonDialog: {
+            display: "flex",
+            marginBottom: "10px",
+            marginTop: "20px",
+            textAlign: "center",
+            marginLeft: "20px"
         },
         avatarButton: {
             width: "230px",
@@ -59,22 +67,30 @@ const ProfilePage = () => {
 
     const [errMsg, setErrMsg] = useState('');
     const [successfulMsg, setSuccessMsg] = useState('');
+
     const [showPassword, setShowPassword] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openFileDialog, setOpenFileDialog] = useState(false);
     const [file, setFile] = useState(null);
+
+    const [rows, setRows] = useState([{property:'Name:', data:user.nombre}, {property:'Email:', data:user.email}]);
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
     const navigate = useNavigate();
 
-    const user = UserService.getCurrentUser()
+    let user = UserService.getCurrentUser()
 
     function logout() {
         UserService.logOut();
         navigate('/login')
     }
+
+    useEffect(() => {
+        setRows([{property:'Name:', data:'user.nombre'}, {property:'Email:', data:'user.email'}]);
+    }, [{property:'Name:', data:'user.nombre'}, {property:'Email:', data:'user.email'}])
+
 
     const handleEditDialogOpen = () => {
         setOpenEditDialog(true);
@@ -101,28 +117,58 @@ const ProfilePage = () => {
     }
 
     const handleEdit = (data) => {
+        if ((data.password1 === data.password2) && (data.password1 !== user.contrasena)) {
+
+            const updatedUser = {nombre: data.name, email: user.email, contrasena: data.password1};
+            const dataToShow = {Name: data.nombre , Email: data.email};
+
+            UserService.editProfile(updatedUser).then(r => {
+                user = UserService.getCurrentUser()
+                //setRows(dataToShow);
+                handleEditDialogClose();
+                setSuccessMsg("Your data was successfully updated")
+                reset();
+
+            }).catch(error => {
+                    setErrMsg("An unexpected error has occurred.")
+                    console.log(error)
+            });
+
+        } else if ((data.password1 === data.password2) && (data.password1 === user.contrasena)) {
+            setErrMsg("Your new password must be different from your current one")
+
+        } else {
+            setErrMsg("Passwords do not match")
+        }
 
     }
 
     const handleFile = (data) => {
+        const formData = new FormData()
+        formData.append('imagen', file);
 
+        UserService.editProfilePicture(formData).then(() => {
+            setOpenFileDialog(false);
+            setFile(null);
+            reset();
+        }).catch(error => {
+            if (error.request.status === 500){
+                setErrMsg(true);
+            }
+        });
     }
 
     function createData(title, data) {
         return { title, data };
     }
 
-    const rows = [
-        createData('Name:', user.nombre),
-        createData('Email:', user.email)
-    ];
 
     return (
         <div>
 
-            <Grid container spacing={4} sx={styles.gridStyle} >
+            <Grid2 container spacing={8} sx={styles.gridStyle} >
 
-                <Grid item>
+                <Grid2 item>
                     <IconButton onClick={handleFileDialogOpen} sx={styles.avatarButton}>
                         <Avatar alt="Remy Sharp" sx={styles.centerAvatar} />
                     </IconButton>
@@ -134,23 +180,28 @@ const ProfilePage = () => {
                             Logout
                         </Button>
                     </Box>
-                </Grid>
+                </Grid2>
 
-                <Grid item xs={6} textAlign="left" marginTop="65px" marginLeft="15px">
+                <Grid2 item marginTop="65px" marginLeft="15px">
                     <TableContainer>
                         <Table sx={{ minWidth: 400, borderBottom: "none"}} aria-label="data table">
                             <TableBody>
                                 {rows.map((row) => (
-                                    <TableRow key={row.title} sx={ { '&:last-child td, &:last-child th': { border: 0 , borderBottom: "none"} }}>
-                                        <TableCell align="right">{row.title}</TableCell>
+                                    <TableRow key={row.property} sx={ { '&:last-child td, &:last-child th': { border: 0 , borderBottom: "none"} }}>
+                                        <TableCell align="right">{row.property}</TableCell>
                                         <TableCell align="left">{row.data}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </Grid>
-            </Grid>
+
+                    <Collapse in={successfulMsg.length !== 0} sx={styles.alert}>
+                        <Alert severity='success'>{successfulMsg}</Alert>
+                    </Collapse>
+
+                </Grid2>
+            </Grid2>
 
             <Dialog open={openEditDialog} onClose={handleEditDialogClose} >
                 <DialogTitle>Edit your changes</DialogTitle>
@@ -172,19 +223,6 @@ const ProfilePage = () => {
                             id="name"
                             label="Name"
                             type="text"
-                            fullWidth
-                            variant="outlined"
-                        />
-                        <TextField
-                            {...register(
-                                "email",
-                                {required: 'Email required', pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email"}})}
-                            error={Boolean(errors.email)}
-                            helperText={errors.email?.message}
-                            margin="dense"
-                            id="name"
-                            label="Email Address"
-                            type="email"
                             fullWidth
                             variant="outlined"
                         />
@@ -240,19 +278,21 @@ const ProfilePage = () => {
                                 )
                             }}
                         />
-                        <DialogActions>
-                            <Button sx={styles.buttonArea} variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
-                            <Button sx={styles.buttonArea} variant="contained"  type="submit">Confirm changes</Button>
-                        </DialogActions>
+                        <Box sx={{display:"flex",justifyContent:"flex-end"}}>
+                            <Button sx={styles.buttonDialog} variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
+                            <Button sx={styles.buttonDialog} variant="contained"  type="submit">Confirm changes</Button>
+                        </Box>
                     </form>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={openFileDialog} onClose={handleFileDialogClose}>
                 <DialogTitle>Select a profile picture</DialogTitle>
+
                 <Collapse in={errMsg}>
                     <Alert severity='error'>There was an unexpected error</Alert>
                 </Collapse>
+
                 <DialogContent>
                     <form noValidate autoComplete="off" onSubmit={handleSubmit(handleFile)}>
                         <input
