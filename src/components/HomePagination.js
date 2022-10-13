@@ -36,7 +36,7 @@ const HomePagination = ({setTables, tableCreated, tableChange, type}) => {
     }
 
     return (
-        <div>
+        <div style={{position: "relative"}}>
             <Box justifyContent={"center"} alignItems={"center"} display={"flex"}
             sx={{
                 margin: "20px 0px"

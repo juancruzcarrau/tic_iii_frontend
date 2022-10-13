@@ -7,7 +7,6 @@ import Menu from "@mui/material/Menu";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuItem from "@mui/material/MenuItem";
-import {AspectRatio, CardCover, Link} from "@mui/joy";
 import {useNavigate} from "react-router-dom";
 
 
@@ -21,7 +20,7 @@ const TableCard = ({tablero, tableChange}) => {
             display: "flex",
             justifyContent: "flex-end",
             minHeight: "5hv",
-            width: "35%",
+            width: "30%",
         },
         card: { height: "190px",
                 maxHeight: "22vh",
@@ -72,10 +71,12 @@ const TableCard = ({tablero, tableChange}) => {
                     alt="image"
                 />:<></>}
             </CardActionArea>
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2, width: "80%", display: "flex", justifyContent: "flex-start", marginLeft: "20px" }} noWrap>
-                    {tablero.nombre}
-                </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', width:"100%" }}>
+                <Box sx={{width: "70%", marginLeft: "20px",display: "flex", justifyContent: "flex-start"}}>
+                    <Typography level="h2" sx={{ fontSize: 'md',fontWeight: "1000", mt: 2 }} noWrap>
+                        {tablero.nombre}
+                    </Typography>
+                </Box>
                 <CardActions sx={style.buttonAction}>
                     <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={favorito} onChange={handleFavoriteChange}/>
 
