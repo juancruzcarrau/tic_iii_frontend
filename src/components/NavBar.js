@@ -17,7 +17,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import {
-    Alert,
+    Alert, CircularProgress,
     Collapse,
     Dialog,
     DialogActions,
@@ -52,6 +52,9 @@ const NavBar = ({dialogFunction, tableCreated}) => {
         },
         fileUpload: {
             marginTop: "20px"
+        },
+        searchField: {
+            color: "#BABFCB"
         }
     }
 
@@ -115,6 +118,19 @@ const NavBar = ({dialogFunction, tableCreated}) => {
     };
     const handleCloseRecent = () => {
         setAnchorEl2(null);
+    };
+
+    const [anchorEl3, setAnchorEl3] = React.useState(null);
+    const open2 = Boolean(anchorEl3);
+    const handleClickRecentReduce = (event) => {
+        BoardService.getRecent(user.email).then(res => {
+            setRecentTables(res);
+        })
+        setAnchorEl3(event.currentTarget);
+
+    };
+    const handleCloseRecentreduce = () => {
+        setAnchorEl3(null);
     };
 
     const handleCreate = (data) => {
@@ -221,6 +237,33 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                             <MenuItem onClick={HandleFavoriteMenu}>
                                 <Typography textAlign="center">Favorites</Typography>
                             </MenuItem>
+                            <MenuItem onClick={handleClickRecentReduce}>
+                                <Typography textAlign="center">Recent</Typography>
+                            </MenuItem>
+                            <Menu
+                                id="fade-menu"
+                                MenuListProps={{
+                                    'aria-labelledby': 'fade-button'
+                                }}
+                                anchorEl={anchorEl3}
+                                open={open2}
+                                onClose={handleCloseRecentreduce}
+                                TransitionComponent={Fade}
+                                anchorOrigin={{
+                                    vertical: 'center',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'center',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Box style={{width:"500px",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
+                                    {recentTables ? recentTables.map((element) => {
+                                        return <RecentTableCard key={element.id} table={element} click={handleCloseRecentreduce}/>
+                                    }): <></>}
+                                </Box>
+                            </Menu>
                             <MenuItem onClick={handleCreateMenu}>
                                 Create
                             </MenuItem>
@@ -270,10 +313,10 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                                 horizontal: 'center',
                             }}
                         >
-                            <Box style={{ width: "13vw",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
+                            <Box style={{ width: "270px",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
                                 {recentTables ? recentTables.map((element) => {
                                     return <RecentTableCard key={element.id} table={element} click={handleCloseRecent}/>
-                                }): <></>}
+                                }): <CircularProgress />}
                             </Box>
                         </Menu>
                         <Button sx={styles.buttonArea} variant="text" onClick={handleClickCreateOpen}>
@@ -318,6 +361,19 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
                     </Dialog>
 
+                    <Box sx={{marginRight: "20px"}}>
+                        <form noValidate autoComplete="off">
+                            <TextField
+                                variant="outlined"
+                                {...register(
+                                    "busqueda")}
+                                margin="dense"
+                                id="nombre"
+                                label="Search"
+                                type="text"
+                            />
+                        </form>
+                    </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
