@@ -5,7 +5,6 @@ const Card = ({cardData}) => {
     const styles = {
         mainPaper: {
             padding: "7px",
-            marginBottom: "10px"
         }
     }
 
