@@ -35,22 +35,9 @@ const ProfilePage = () => {
             textAlign: "center",
             marginLeft: "20px"
         },
-        avatarButton: {
-            width: "230px",
-            height: "230px",
-            marginBottom: "10px",
-            textAlign: "center"
-        },
         centerAvatar: {
             width: "230px",
-            height: "230px",
-            margin: "0 auto"
-        },
-        gridStyle: {
-            width: "100vw",
-            height: "100vh",
-            margin: "0 auto",
-            paddingTop: "5%"
+            height: "230px"
         },
         fileUpload: {
             marginLeft: "100px",
@@ -75,7 +62,8 @@ const ProfilePage = () => {
 
     }
 
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const {register: registerEdit, handleSubmit: handleSubmitEdit, formState: {errors: errorsEdit}, reset: resetEdit} = useForm();
+    const {register: registerFile, handleSubmit: handleSubmitFile, formState: {errors: errorsFile}, reset: resetFile} = useForm();
 
     const [errMsg, setErrMsg] = useState('');
     const [successfulMsg, setSuccessMsg] = useState('');
@@ -109,7 +97,7 @@ const ProfilePage = () => {
     const handleEditDialogClose = () => {
         setOpenEditDialog(false);
         setErrMsg('');
-        reset();
+        resetEdit();
     };
 
     const handleFileDialogOpen = () => {
@@ -119,7 +107,7 @@ const ProfilePage = () => {
     const handleFileDialogClose = () => {
         setOpenFileDialog(false);
         setErrMsg('');
-        reset();
+        resetEdit();
     };
 
     const changeFile = (event) => {
@@ -135,7 +123,7 @@ const ProfilePage = () => {
                 setUser(newUser);
                 handleEditDialogClose();
                 setSuccessMsg("Your data was successfully updated")
-                reset();
+                resetEdit();
 
             }).catch(error => {
                     setErrMsg("An unexpected error has occurred.")
@@ -153,13 +141,15 @@ const ProfilePage = () => {
 
     const handleFile = (data) => {
         const formData = new FormData()
-        formData.append('mailUsuario', user.email);
-        formData.append('imagen', file);
+        formData.append('email', user.email);
+        formData.append('foto', file);
+
+        console.log(formData);
 
         UserService.editProfilePicture(formData).then(() => {
             setOpenFileDialog(false);
             setFile(null);
-            reset();
+            resetFile();
         }).catch(error => {
             if (error.request.status === 500){
                 setErrMsg('It occured an error trying to upload the file');
@@ -173,7 +163,7 @@ const ProfilePage = () => {
             <Box sx={styles.flexContainer}>
 
                 <Box sx={styles.flexLeftItem}>
-                    <IconButton onClick={handleFileDialogOpen} sx={styles.avatarButton}>
+                    <IconButton onClick={handleFileDialogOpen}>
                         <Avatar alt="Remy Sharp" sx={styles.centerAvatar} />
                     </IconButton>
                     <Box mt={4}>
@@ -215,13 +205,13 @@ const ProfilePage = () => {
                         <Alert severity='error'>{errMsg}</Alert>
                     </Collapse>
 
-                    <form noValidate autoComplete="off" onSubmit={handleSubmit(handleEdit)}>
+                    <form noValidate autoComplete="off" onSubmit={handleSubmitEdit(handleEdit)}>
                         <TextField
-                            {...register(
+                            {...registerEdit(
                                 "name",
                                 {required: 'Name required'})}
-                            error={Boolean(errors.name)}
-                            helperText={errors.name?.message}
+                            error={Boolean(errorsEdit.name)}
+                            helperText={errorsEdit.name?.message}
                             autoFocus
                             margin="dense"
                             id="name"
@@ -231,11 +221,11 @@ const ProfilePage = () => {
                             variant="outlined"
                         />
                         <TextField
-                            {...register(
+                            {...registerEdit(
                                 "password1",
                                 {required: 'Password required', pattern: {value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i, message: "Invalid password. It must contain at least eight characters, one letter and one number"}})}
-                            error={Boolean(errors.password1)}
-                            helperText={errors.password1?.message}
+                            error={Boolean(errorsEdit.password1)}
+                            helperText={errorsEdit.password1?.message}
                             margin="dense"
                             id="password1"
                             label="Password"
@@ -257,11 +247,11 @@ const ProfilePage = () => {
                             }}
                         />
                         <TextField
-                            {...register(
+                            {...registerEdit(
                                 "password2",
                                 {required: 'Password required', pattern: {value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i, message: "Invalid password. It must contain at least eight characters, one letter and one number"}})}
-                            error={Boolean(errors.password2)}
-                            helperText={errors.password2?.message}
+                            error={Boolean(errorsEdit.password2)}
+                            helperText={errorsEdit.password2?.message}
                             margin="dense"
                             id="password2"
                             label="Repeat Password"
@@ -282,7 +272,7 @@ const ProfilePage = () => {
                                 )
                             }}
                         />
-                        <Box sx={{display:"flex",justifyContent:"flex-end"}}>
+                        <Box>
                             <Button sx={styles.buttonDialog} variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
                             <Button sx={styles.buttonDialog} variant="contained"  type="submit">Confirm changes</Button>
                         </Box>
@@ -298,7 +288,7 @@ const ProfilePage = () => {
                 </Collapse>
 
                 <DialogContent>
-                    <form noValidate autoComplete="off" onSubmit={handleSubmit(handleFile)}>
+                    <form noValidate autoComplete="off" onSubmit={handleSubmitFile(handleFile)}>
                         <input
                             onChange={(e) => changeFile(e)}
                             type="file"
