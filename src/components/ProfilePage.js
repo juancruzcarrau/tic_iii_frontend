@@ -35,9 +35,18 @@ const ProfilePage = () => {
             textAlign: "center",
             marginLeft: "20px"
         },
+        avatarButton: {
+            width: "230px",
+            height: "230px",
+            marginBottom: "10px",
+            textAlign: "center"
+        },
         centerAvatar: {
             width: "230px",
             height: "230px"
+        },
+            height: "230px",
+            margin: "0 auto"
         },
         fileUpload: {
             marginLeft: "100px",
@@ -51,7 +60,9 @@ const ProfilePage = () => {
             padding: "0 200px 0",
             justifyContent: "center",
             alignItems: "center",
-            minHeight: "100%"
+            minHeight: "100%",
+            height: "100%",
+            gap: "40px"
         },
         flexLeftItem: {
             flexGrow: "1"
@@ -141,10 +152,8 @@ const ProfilePage = () => {
 
     const handleFile = (data) => {
         const formData = new FormData()
-        formData.append('email', user.email);
-        formData.append('foto', file);
-
-        console.log(formData);
+        formData.append('mailUsuario', user.email);
+        formData.append('imagen', file);
 
         UserService.editProfilePicture(formData).then(() => {
             setOpenFileDialog(false);
@@ -158,8 +167,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <div>
-
+        <Box sx={{height:"100%"}}>
             <Box sx={styles.flexContainer}>
 
                 <Box sx={styles.flexLeftItem}>
@@ -303,8 +311,7 @@ const ProfilePage = () => {
                 </DialogContent>
 
             </Dialog>
-
-        </div>
+        </Box>
     )
 }
 
