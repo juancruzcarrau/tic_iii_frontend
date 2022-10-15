@@ -33,6 +33,7 @@ const UserService = {
     editProfile: async (data) => {
         return await axios.put(process.env.REACT_APP_BACKEND_URL + "/usuarios/editprofile", data)
             .then(res => {
+                localStorage.setItem('currentUser', JSON.stringify(res.data))
                 return res.data;
             })
             .catch(error => {
@@ -43,6 +44,7 @@ const UserService = {
     editProfilePicture: async (data) => {
         return await axios.put(process.env.REACT_APP_BACKEND_URL + "/usuarios/editprofilepicture", data)
             .then(res => {
+                localStorage.setItem('currentUser', JSON.stringify(res.data))
                 return res.data;
             })
             .catch(error => {

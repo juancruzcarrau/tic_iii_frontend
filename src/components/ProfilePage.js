@@ -16,8 +16,6 @@ import IconButton from "@mui/material/IconButton";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import Grid2 from "@mui/material/Unstable_Grid2";
-import BoardService from "../services/BoardService";
 
 const ProfilePage = () => {
 
@@ -60,7 +58,21 @@ const ProfilePage = () => {
         },
         fileUploadCancel: {
             marginTop: "40px"
+        },
+        flexContainer: {
+            display: "flex",
+            padding: "0 200px 0",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100%"
+        },
+        flexLeftItem: {
+            flexGrow: "1"
+        },
+        flexRightItem: {
+            flexGrow: "2"
         }
+
     }
 
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
@@ -73,14 +85,13 @@ const ProfilePage = () => {
     const [openFileDialog, setOpenFileDialog] = useState(false);
     const [file, setFile] = useState(null);
 
-    const [rows, setRows] = useState([{property:'Name:', data:user.nombre}, {property:'Email:', data:user.email}]);
-
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
     const navigate = useNavigate();
 
-    let user = UserService.getCurrentUser()
+    const [user, setUser] = useState(UserService.getCurrentUser);
+    const [rows, setRows] = useState([{property: 'Name:', data: user.nombre}, {property: 'Email:', data: user.email}]);
 
     function logout() {
         UserService.logOut();
@@ -88,9 +99,8 @@ const ProfilePage = () => {
     }
 
     useEffect(() => {
-        setRows([{property:'Name:', data:'user.nombre'}, {property:'Email:', data:'user.email'}]);
-    }, [{property:'Name:', data:'user.nombre'}, {property:'Email:', data:'user.email'}])
-
+        setRows([{property: 'Name:', data: user.nombre}, {property: 'Email:', data: user.email}]);
+    }, [user])
 
     const handleEditDialogOpen = () => {
         setOpenEditDialog(true);
@@ -120,11 +130,9 @@ const ProfilePage = () => {
         if ((data.password1 === data.password2) && (data.password1 !== user.contrasena)) {
 
             const updatedUser = {nombre: data.name, email: user.email, contrasena: data.password1};
-            const dataToShow = {Name: data.nombre , Email: data.email};
 
-            UserService.editProfile(updatedUser).then(r => {
-                user = UserService.getCurrentUser()
-                //setRows(dataToShow);
+            UserService.editProfile(updatedUser).then(newUser => {
+                setUser(newUser);
                 handleEditDialogClose();
                 setSuccessMsg("Your data was successfully updated")
                 reset();
@@ -145,6 +153,7 @@ const ProfilePage = () => {
 
     const handleFile = (data) => {
         const formData = new FormData()
+        formData.append('mailUsuario', user.email);
         formData.append('imagen', file);
 
         UserService.editProfilePicture(formData).then(() => {
@@ -153,22 +162,17 @@ const ProfilePage = () => {
             reset();
         }).catch(error => {
             if (error.request.status === 500){
-                setErrMsg(true);
+                setErrMsg('It occured an error trying to upload the file');
             }
         });
     }
 
-    function createData(title, data) {
-        return { title, data };
-    }
-
-
     return (
         <div>
 
-            <Grid2 container spacing={8} sx={styles.gridStyle} >
+            <Box sx={styles.flexContainer}>
 
-                <Grid2 item>
+                <Box sx={styles.flexLeftItem}>
                     <IconButton onClick={handleFileDialogOpen} sx={styles.avatarButton}>
                         <Avatar alt="Remy Sharp" sx={styles.centerAvatar} />
                     </IconButton>
@@ -180,9 +184,9 @@ const ProfilePage = () => {
                             Logout
                         </Button>
                     </Box>
-                </Grid2>
+                </Box>
 
-                <Grid2 item marginTop="65px" marginLeft="15px">
+                <Box sx={styles.flexRightItem}>
                     <TableContainer>
                         <Table sx={{ minWidth: 400, borderBottom: "none"}} aria-label="data table">
                             <TableBody>
@@ -192,7 +196,7 @@ const ProfilePage = () => {
                                         <TableCell align="left">{row.data}</TableCell>
                                     </TableRow>
                                 ))}
-                            </TableBody>
+                             </TableBody>
                         </Table>
                     </TableContainer>
 
@@ -200,8 +204,8 @@ const ProfilePage = () => {
                         <Alert severity='success'>{successfulMsg}</Alert>
                     </Collapse>
 
-                </Grid2>
-            </Grid2>
+                </Box>
+            </Box>
 
             <Dialog open={openEditDialog} onClose={handleEditDialogClose} >
                 <DialogTitle>Edit your changes</DialogTitle>
@@ -289,8 +293,8 @@ const ProfilePage = () => {
             <Dialog open={openFileDialog} onClose={handleFileDialogClose}>
                 <DialogTitle>Select a profile picture</DialogTitle>
 
-                <Collapse in={errMsg}>
-                    <Alert severity='error'>There was an unexpected error</Alert>
+                <Collapse in={errMsg.length !== 0} sx={styles.alert}>
+                    <Alert severity='error'>{errMsg}</Alert>
                 </Collapse>
 
                 <DialogContent>

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,24 +13,21 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import {
     Alert, CircularProgress,
     Collapse,
     Dialog,
-    DialogActions,
     DialogContent,
     DialogTitle, Fade,
-    Input,
     Slide,
     TextField
 } from "@mui/material";
 import BoardService from "../services/BoardService";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RecentTableCard from "./RecentTableCard";
-import ProfilePage from "./ProfilePage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -73,6 +70,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
     }
 
     function profile() {
+        handleCloseUserMenu();
         navigate(`/profile/${user.id}`)
     }
 
