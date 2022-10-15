@@ -46,12 +46,6 @@ const ProfilePage = () => {
             height: "230px",
             margin: "0 auto"
         },
-        gridStyle: {
-            width: "100vw",
-            height: "100vh",
-            margin: "0 auto",
-            paddingTop: "5%"
-        },
         fileUpload: {
             marginLeft: "100px",
             marginTop: "40px"
@@ -64,7 +58,9 @@ const ProfilePage = () => {
             padding: "0 200px 0",
             justifyContent: "center",
             alignItems: "center",
-            minHeight: "100%"
+            minHeight: "100%",
+            height: "100%",
+            gap: "40px"
         },
         flexLeftItem: {
             flexGrow: "1"
@@ -168,8 +164,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <div>
-
+        <Box sx={{height:"100%"}}>
             <Box sx={styles.flexContainer}>
 
                 <Box sx={styles.flexLeftItem}>
@@ -313,8 +308,7 @@ const ProfilePage = () => {
                 </DialogContent>
 
             </Dialog>
-
-        </div>
+        </Box>
     )
 }
 
