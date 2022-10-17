@@ -52,9 +52,6 @@ const Board = () => {
         },
         listaBox: {
             maxHeight: "100%"
-        },
-        stack: {
-            overflowX: "auto"
         }
     })
 
