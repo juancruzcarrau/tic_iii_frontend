@@ -5,10 +5,13 @@ import Card from "./Card";
 import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
 import {useState} from "react";
+import {useForm} from "react-hook-form";
+import CloseIcon from '@mui/icons-material/Close';
+import CardService from "../services/CardService";
 
 const List = ({listData}) => {
 
-    const [styles, setStyles] = useState({
+    const styles = {
         list: {
             minWidth: "300px",
             maxHeight: "calc(100% - 2 * 10px - 2px)",
@@ -21,7 +24,8 @@ const List = ({listData}) => {
             gap: "5px"
         },
         listTitle: {
-            margin: "5px 10px 0px"
+            margin: "5px 10px 0px",
+            fontWeight: "600"
         },
         cardFlex: {
             display: "flex",
@@ -39,11 +43,26 @@ const List = ({listData}) => {
                 backgroundColor: 'rgb(0, 0, 0, 0.1)'
             }
         },
-        addNewCardTextField: {
+        addNewCardButtonsFlex: {
+            display: "flex",
+            gap: "10px",
+            paddingTop: "10px",
+            alignItems: "stretch"
+        },
+        addNewCardButtonCancel: {
+            minWidth:0,
+            minHeight: 0,
+            padding: "5px",
+            backgroundColor: 'rgb(0, 0, 0, 0)',
+            '&:hover':{
+                backgroundColor: 'rgb(0, 0, 0, 0.1)'
+            }
         }
-    })
+    }
 
     const [addNewCardIsIdle, setAddNewCardIsIdle] = useState(true)
+    const {register, handleSubmit, reset} = useForm();
+
 
     const addNewCardOnClick = () => {
         setAddNewCardIsIdle(false)
@@ -53,6 +72,16 @@ const List = ({listData}) => {
         setAddNewCardIsIdle(true)
     }
 
+    const addNewCard = async (data) => {
+        if(data.title){
+            // If there is a title introduced
+            data = {...data, listId: listData.id}
+            const newCard = await CardService.addNewCard(data)
+            listData.tarjetas.push(newCard)
+            reset()
+            addNewCardOnClickAway()
+        }
+    }
 
     return(
         <Paper sx={styles.list}>
@@ -82,17 +111,35 @@ const List = ({listData}) => {
                 </Button>
             :
                 <ClickAwayListener onClickAway={addNewCardOnClickAway}>
-                    <Paper>
-                        <TextField
-                            variant="standard"
-                            multiline
-                            maxRows={3}
-                            fullWidth
-                            sx={styles.addNewCardTextField}
-                            InputProps={{style: {fontFamily: "system-ui", padding: "7px"}, disableUnderline: true}}
-                            InputLabelProps={{style: {fontFamily: "system-ui",padding: "7px"}}}>
-                        </TextField>
-                    </Paper>
+                    <form noValidate autoComplete="off" onSubmit={handleSubmit(addNewCard)}>
+                        <Paper>
+                            <TextField
+                                variant="standard"
+                                multiline
+                                autoFocus
+                                maxRows={3}
+                                fullWidth
+                                {...register("title")}
+                                InputProps={{style: {fontFamily: "system-ui", padding: "7px"}, disableUnderline: true}}
+                                InputLabelProps={{style: {fontFamily: "system-ui",padding: "7px"}}}>
+                            </TextField>
+                        </Paper>
+
+                        <Box sx={styles.addNewCardButtonsFlex}>
+
+                            <Button sx={{fontFamily: "system-ui", textTransform: "none",}}
+                                    variant="contained"
+                                    disableElevation
+                                    type="submit">
+                                Add card
+                            </Button>
+
+                            <Button variant="filled" sx={styles.addNewCardButtonCancel} onClick={addNewCardOnClickAway}>
+                                <CloseIcon/>
+                            </Button>
+
+                        </Box>
+                    </form>
                 </ClickAwayListener>
             }
         </Paper>
