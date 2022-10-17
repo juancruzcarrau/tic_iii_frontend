@@ -14,10 +14,10 @@ const RecentTableCard = ({table, click}) => {
     }
 
     return (
-        <MenuItem sx={{display: "flex",alignItems:"center", width: "12vw", marginBottom:"10px", borderRadius:"10px"}} onClick={handleClickTable}>
+        <MenuItem sx={{display: "flex",alignItems:"center", width: "250px", marginBottom:"10px", borderRadius:"10px"}} onClick={handleClickTable}>
                 <Box sx={{display: "flex", alignItems:"center", width:"100%"}}>
-                    <Box sx={{marginRight:"10px", width:"40%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                        <img src={`data:image/jpeg;base64,${table.imagenTableroDto.foto}`} height="35px" style={{borderRadius:"10px"}}/>
+                    <Box sx={{ width:"40%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                        <img src={`data:image/jpeg;base64,${table.imagenTableroDto.foto}`} height="35px" width="60px" style={{borderRadius:"10px"}}/>
                     </Box>
                     <Typography variant="subtitle1" sx={{width:"60%"}} noWrap>
                         {table.nombre}

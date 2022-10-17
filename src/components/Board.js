@@ -64,7 +64,7 @@ const Board = () => {
         mainFlexHeightAdjustment();
         // setBackgroundImage()
 
-    }, [])
+    }, [id])
 
     useEffect(() => {
     }, [board])
