@@ -64,10 +64,7 @@ const Board = () => {
         mainFlexHeightAdjustment();
         // setBackgroundImage()
 
-    }, [])
-
-    useEffect(() => {
-    }, [board])
+    }, [id])
 
     const getBoardData = () => {
         BoardService.getById(id)

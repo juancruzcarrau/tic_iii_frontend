@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Card from "./Card";
 import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import CloseIcon from '@mui/icons-material/Close';
 import CardService from "../services/CardService";
@@ -60,6 +60,8 @@ const List = ({listData}) => {
         }
     }
 
+    useEffect(()=>{console.log(listData)})
+
     const [addNewCardIsIdle, setAddNewCardIsIdle] = useState(true)
     const {register, handleSubmit, reset} = useForm();
 
@@ -94,15 +96,19 @@ const List = ({listData}) => {
             </Box>
 
             {/*****CARDS*****/}
-            <Box sx={styles.cardFlex}>
-                {listData.tarjetas.map(card => {
-                    return(
-                        <div key={card.posicion}>
-                            <Card cardData={card}/>
-                        </div>
-                    )
-                })}
-            </Box>
+            {listData.tarjetas.length !== 0 && (
+                    <Box sx={styles.cardFlex}>
+                        {listData.tarjetas.map(card => {
+                            return(
+                                <div key={card.posicion}>
+                                    <Card cardData={card}/>
+                                </div>
+                            )
+                        })}
+                    </Box>
+                )
+            }
+
 
             {/*****ADD CARDS*****/}
             {addNewCardIsIdle ?
