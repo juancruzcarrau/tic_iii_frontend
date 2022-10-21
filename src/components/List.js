@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Card from "./Card";
 import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import CloseIcon from '@mui/icons-material/Close';
 import CardService from "../services/CardService";
@@ -59,8 +59,6 @@ const List = ({listData}) => {
             }
         }
     }
-
-    useEffect(()=>{console.log(listData)})
 
     const [addNewCardIsIdle, setAddNewCardIsIdle] = useState(true)
     const {register, handleSubmit, reset} = useForm();
