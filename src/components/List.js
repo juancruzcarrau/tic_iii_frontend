@@ -94,15 +94,19 @@ const List = ({listData}) => {
             </Box>
 
             {/*****CARDS*****/}
-            <Box sx={styles.cardFlex}>
-                {listData.tarjetas.map(card => {
-                    return(
-                        <div key={card.posicion}>
-                            <Card cardData={card}/>
-                        </div>
-                    )
-                })}
-            </Box>
+            {listData.tarjetas.length !== 0 && (
+                    <Box sx={styles.cardFlex}>
+                        {listData.tarjetas.map(card => {
+                            return(
+                                <div key={card.posicion}>
+                                    <Card cardData={card}/>
+                                </div>
+                            )
+                        })}
+                    </Box>
+                )
+            }
+
 
             {/*****ADD CARDS*****/}
             {addNewCardIsIdle ?
