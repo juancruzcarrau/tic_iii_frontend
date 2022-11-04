@@ -14,7 +14,8 @@ const HomePage = ({tableCreated}) => {
     const style = {
         container: {
             maxWidth: "90%",
-            marginBottom: "10px"
+            marginBottom: "10px",
+            paddingTop: "15vh"
         },
         element: {
             minWidth: "20vw",
@@ -37,42 +38,23 @@ const HomePage = ({tableCreated}) => {
         setTableChange(!tableChange);
     }
 
-    function handleSearch() {
-
-    }
-
     return (
-        <div>
-            <Typography variant="h4" sx={{marginTop:"10px"}}>Welcome {user.nombre}!</Typography>
-            <Typography variant="h6" sx={{marginBottom: "20px"}}>Tables:</Typography>
-            {/*<Box sx={{display:"flex",marginBottom:"10px"}}>*/}
-            {/*    <form noValidate autoComplete="off" onSubmit={handleSubmit(handleSearch)}>*/}
-            {/*        <TextField*/}
-            {/*            variant="outlined"*/}
-            {/*            {...register(*/}
-            {/*                "nombre",)}*/}
-            {/*            margin="dense"*/}
-            {/*            id="nombre"*/}
-            {/*            label="Name"*/}
-            {/*            type="text"*/}
-            {/*        />*/}
-            {/*    </form>*/}
-            {/*</Box>*/}
-            <Box sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-            }}>
-                <Grid2 sx={style.container} container spacing={2}>
-                    {tables.map((element) => {
-                        return <Grid2 xs={12} sm={6} lg={4} xl={3} key={element.id} sx={style.element}> <TableCard
-                            tablero={element} tableChange={() => updateTable()}/> </Grid2>
-                    })}
-                </Grid2>
-                <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange}
-                                type={type}/>
-            </Box>
-        </div>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            // maxHeight: "calc(100% - 15px - 10px)", // 100 - paddingBottom - paddingTop - Navbar height
+            // minHeight: "calc(100% - 15px - 10px)",
+        }}>
+            <Grid2 sx={style.container} container spacing={2} rowSpacing={4}>
+                {tables.map((element) => {
+                    return <Grid2 xs={12} sm={6} lg={3} key={element.id} sx={style.element}> <TableCard
+                        tablero={element} tableChange={() => updateTable()}/> </Grid2>
+                })}
+            </Grid2>
+            <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange}
+                            type={type}/>
+        </Box>
     );
 };
 

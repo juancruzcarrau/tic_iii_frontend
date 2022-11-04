@@ -63,7 +63,7 @@ const TableCard = ({tablero, tableChange}) => {
 
     return (
         <Card sx={style.card} elevation={2}>
-            <CardActionArea onClick={handleClickTable}>
+            <CardActionArea onClick={tablero.archivado? null:handleClickTable}>
                 {tablero.imagenTableroDto?<CardMedia
                     sx={{maxHeight: "14vh"}}
                     component="img"
@@ -99,8 +99,10 @@ const TableCard = ({tablero, tableChange}) => {
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}} onClick={storeTable}>Store</MenuItem>
-                    </Menu>
+                        {tablero.archivado? <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}} >Restore</MenuItem>:
+                            <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}
+                                   onClick={storeTable}>Archived</MenuItem>
+                        }                    </Menu>
                 </CardActions>
             </Box>
         </Card>
