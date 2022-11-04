@@ -179,13 +179,19 @@ const NavBar = ({dialogFunction, tableCreated}) => {
         handleClickCreateOpen();
     }
 
+    function hanldeArchivedTables() {
+        navigate("archived")
+    }
+
     return (
         <AppBar position="sticky">
             <Container maxWidth="100vh">
                 <Toolbar disableGutters>
-                    <Link to={"/home"}>
-                        <img src={logo} alt="logo" style={{width: "50px"}}/>
-                    </Link>
+                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                        <Link to={"/home"}>
+                            <img src={logo} alt="logo" style={{width: "50px"}}/>
+                        </Link>
+                    </Box>
                     <Typography
                         variant="h6"
                         noWrap
@@ -202,7 +208,8 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                         Thorus
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+
+                    <Box sx={{ display: { xs: 'flex', md: 'none' }, flexGrow:1 }}>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
@@ -270,21 +277,13 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
                         </Menu>
                     </Box>
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        href=""
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        Thorus
-                    </Typography>
+
+                    <Box sx={{ display: { xs: 'flex', md: 'none'}, mr: 2, flexGrow: 1 }}>
+                        <Link to={"/home"}>
+                            <img src={logo} alt="logo" style={{width: "50px"}}/>
+                        </Link>
+                    </Box>
+
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         <Button sx={styles.buttonArea} variant="text" onClick={handleClickHome}>
                             Boards
@@ -361,20 +360,6 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
                     </Dialog>
 
-                    <Box sx={{marginRight: "20px"}}>
-                        <form noValidate autoComplete="off">
-                            <TextField
-                                variant="outlined"
-                                {...register(
-                                    "busqueda")}
-                                margin="dense"
-                                id="nombre"
-                                label="Search"
-                                type="text"
-                            />
-                        </form>
-                    </Box>
-
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -399,6 +384,9 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                          >
                             <MenuItem onClick={logout}>
                                 <Typography textAlign="center">Logout</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={hanldeArchivedTables}>
+                                <Typography textAlign="center">Archived</Typography>
                             </MenuItem>
                         </Menu>
                     </Box>
