@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
     Alert,
-    Button,
+    Button, Card, CardActionArea, CardActions, CardMedia, Checkbox,
     Collapse, Dialog, DialogContent, DialogTitle,
     InputAdornment,
     Table, TableBody,
@@ -13,9 +13,13 @@ import {useForm} from "react-hook-form";
 import UserService from "../services/UserService";
 import {useNavigate} from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
+import {Favorite, FavoriteBorder, Visibility, VisibilityOff} from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 const ProfilePage = () => {
 
@@ -43,8 +47,6 @@ const ProfilePage = () => {
         },
         centerAvatar: {
             width: "230px",
-            height: "230px"
-        },
             height: "230px",
             margin: "0 auto"
         },
@@ -152,13 +154,15 @@ const ProfilePage = () => {
 
     const handleFile = (data) => {
         const formData = new FormData()
-        formData.append('mailUsuario', user.email);
+        formData.append('email', user.email);
         formData.append('imagen', file);
 
-        UserService.editProfilePicture(formData).then(() => {
+        UserService.editProfilePicture(formData).then(newUser => {
+            setUser(newUser);
             setOpenFileDialog(false);
             setFile(null);
             resetFile();
+            console.log(user);
         }).catch(error => {
             if (error.request.status === 500){
                 setErrMsg('It occured an error trying to upload the file');
