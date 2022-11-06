@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import BoardService from "../services/BoardService";
 import Box from "@mui/material/Box";
@@ -7,7 +7,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Button from "@mui/material/Button";
 import List from "./List";
-import {ClickAwayListener, Paper, TextField} from "@mui/material";
+import {Checkbox, ClickAwayListener, Paper, TextField} from "@mui/material";
 import DivisorLine from "./DivisorLine";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -154,6 +154,12 @@ const Board = () => {
         }
     }
 
+    function handleFavoriteChange() {
+        board.favorito = !board.favorito;
+        BoardService.update(board)
+        reset()
+    }
+
     return(
         <Box sx={styles.mainFlex} ref={ref}>
 
@@ -163,7 +169,7 @@ const Board = () => {
 
                 <DivisorLine color={"rgb(0,0,0,0.7)"} size={"20px"}/>
 
-                <Button variant="filled" sx={styles.favouriteButton}>
+                <Button variant="filled" sx={styles.favouriteButton} onClick={handleFavoriteChange}>
                     {board.favorito ? (
                         <FavoriteIcon/>
                     ) : (

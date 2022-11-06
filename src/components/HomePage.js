@@ -47,10 +47,10 @@ const HomePage = ({tableCreated}) => {
             // minHeight: "calc(100% - 15px - 10px)",
         }}>
             <Grid2 sx={style.container} container spacing={2} rowSpacing={4}>
-                {tables.map((element) => {
+                {tables.length>0 ? tables.map((element) => {
                     return <Grid2 xs={12} sm={6} lg={3} key={element.id} sx={style.element}> <TableCard
                         tablero={element} tableChange={() => updateTable()}/> </Grid2>
-                })}
+                }): <Grid2> <h2>No tables</h2> </Grid2>}
             </Grid2>
             <HomePagination setTables={(t) => setTables(t)} tableCreated={tableCreated} tableChange={tableChange}
                             type={type}/>
