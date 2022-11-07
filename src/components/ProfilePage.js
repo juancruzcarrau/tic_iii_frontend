@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
     Alert,
-    Button, Card, CardActionArea, CardActions, CardMedia, Checkbox,
+    Button, CardMedia,
     Collapse, Dialog, DialogContent, DialogTitle,
     InputAdornment,
     Table, TableBody,
@@ -13,13 +13,8 @@ import {useForm} from "react-hook-form";
 import UserService from "../services/UserService";
 import {useNavigate} from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
-import {Favorite, FavoriteBorder, Visibility, VisibilityOff} from "@mui/icons-material";
-import Avatar from "@mui/material/Avatar";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 
 const ProfilePage = () => {
 
@@ -162,7 +157,6 @@ const ProfilePage = () => {
             setOpenFileDialog(false);
             setFile(null);
             resetFile();
-            console.log(user);
         }).catch(error => {
             if (error.request.status === 500){
                 setErrMsg('It occured an error trying to upload the file');
@@ -176,7 +170,12 @@ const ProfilePage = () => {
 
                 <Box sx={styles.flexLeftItem}>
                     <IconButton onClick={handleFileDialogOpen}>
-                        <Avatar alt="Remy Sharp" sx={styles.centerAvatar} />
+                        {user.imagenUsuarioDto?<CardMedia
+                            sx={{display: 'inline-block', position: 'relative', width: '200px', height: '200px', overflow: 'hidden', borderRadius: '50%'}}
+                            component="img"
+                            image={`data:image/jpeg;base64,${user.imagenUsuarioDto.foto}`}
+                            alt="image"
+                        />:<></>}
                     </IconButton>
                     <Box mt={4}>
                         <Button onClick={handleEditDialogOpen} sx={styles.buttonArea} variant="contained" fullWidth>
@@ -315,7 +314,9 @@ const ProfilePage = () => {
                 </DialogContent>
 
             </Dialog>
+
         </Box>
+
     )
 }
 
