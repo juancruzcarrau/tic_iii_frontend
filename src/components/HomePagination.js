@@ -16,18 +16,28 @@ const HomePagination = ({setTables, tableCreated, tableChange, type}) => {
     })
 
     useEffect(() => {
-        if (type === 'favorites'){
-            tableService.getFavorites(user.email, "desc", pagination.from, pagination.to)
-                .then(res => {
-                    setPagination({...pagination, count: res.totalElements});
-                    setTables(res.data);
-                })
-        }else {
-            tableService.getAll(user.email, "desc", pagination.from, pagination.to)
-                .then(res => {
-                    setPagination({...pagination, count: res.totalElements});
-                    setTables(res.data);
-                })
+        switch (type){
+            case 'favorites':
+                tableService.getFavorites(user.email, "desc", pagination.from, pagination.to)
+                    .then(res => {
+                        setPagination({...pagination, count: res.totalElements});
+                        setTables(res.data);
+                    })
+                break
+            case 'archived':
+                tableService.getArchived(user.email, "desc", pagination.from, pagination.to)
+                    .then(res => {
+                        setPagination({...pagination, count: res.totalElements});
+                        setTables(res.data);
+                    })
+                break
+            default:
+                tableService.getAll(user.email, "desc", pagination.from, pagination.to)
+                    .then(res => {
+                        setPagination({...pagination, count: res.totalElements});
+                        setTables(res.data);
+                    })
+                break
         }
     }, [tableCreated ,pagination.from, pagination.to, tableChange, type]);
 
