@@ -61,6 +61,11 @@ const TableCard = ({tablero, tableChange}) => {
         BoardService.update(tablero).then(tableChange);
     }
 
+    function reStoreTable() {
+        tablero.archivado = false;
+        BoardService.update(tablero).then(tableChange);
+    }
+
     return (
         <Card sx={style.card} elevation={2}>
             <CardActionArea onClick={tablero.archivado? null:handleClickTable}>
@@ -99,7 +104,7 @@ const TableCard = ({tablero, tableChange}) => {
                         open={open}
                         onClose={handleClose}
                     >
-                        {tablero.archivado? <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}} >Restore</MenuItem>:
+                        {tablero.archivado? <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}} onClick={reStoreTable} >Restore</MenuItem>:
                             <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}
                                    onClick={storeTable}>Archived</MenuItem>
                         }                    </Menu>
