@@ -145,6 +145,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
         const formData = new FormData()
         formData.append('mailUsuario', user.email);
         formData.append('nombre', data.nombre);
+        formData.append('id_imagen', 15);
         formData.append('imagen', file);
 
         BoardService.create(formData).then(() => {
