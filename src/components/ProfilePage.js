@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Alert,
     Button, CardMedia,
-    Collapse, Dialog, DialogContent, DialogTitle,
+    Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
     InputAdornment,
     Table, TableBody,
     TableCell, TableContainer,
@@ -16,29 +16,54 @@ import IconButton from "@mui/material/IconButton";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 
-const ProfilePage = () => {
+const ProfilePage = ({funcionCambio}) => {
 
-    const styles = {
+    const {register: registerEdit, handleSubmit: handleSubmitEdit, formState: {errors: errorsEdit}, reset: resetEdit} = useForm();
+    const {register: registerFile, handleSubmit: handleSubmitFile, formState: {errors: errorsFile}, reset: resetFile} = useForm();
+
+    const [errMsg, setErrMsg] = useState('');
+    const [successfulMsg, setSuccessMsg] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openFileDialog, setOpenFileDialog] = useState(false);
+    const [file, setFile] = useState(null);
+
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
+    const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
+    const navigate = useNavigate();
+
+    const ref = useRef(null);
+
+    const [user, setUser] = useState(UserService.getCurrentUser);
+    const [rows, setRows] = useState([{property: 'Name:', data: user.nombre}, {property: 'Email:', data: user.email}]);
+
+    const [styles, setStyles] = useState({
+        mainFlex: {
+            display: "flex",
+            width: "calc(100% - 2*15)",
+            maxHeight: "calc(100% - 15px - 10px)", // 100 - paddingBottom - paddingTop - Navbar height
+            minHeight: "calc(100% - 15px - 10px)",
+            padding: "15px",
+            paddingTop: "10px",
+            flexDirection: "column",
+            gap: "10px"
+        },
         alert: {
-            marginBottom: "10px",
+            marginBottom: "10px"
         },
         buttonArea: {
-            display: "flex",
             marginBottom: "10px",
-            textAlign: "center"
+            textAlign: "center",
+            width: "200px"
         },
         buttonDialog: {
             display: "flex",
             marginBottom: "10px",
             marginTop: "20px",
             textAlign: "center",
-            marginLeft: "20px"
-        },
-        avatarButton: {
-            width: "230px",
-            height: "230px",
-            marginBottom: "10px",
-            textAlign: "center"
+            justifyContent: "space-between",
         },
         centerAvatar: {
             width: "230px",
@@ -62,32 +87,22 @@ const ProfilePage = () => {
             gap: "40px"
         },
         flexLeftItem: {
-            flexGrow: "1"
+            paddingTop: "10%",
+            flexGrow: "1",
+            paddingLeft:"15%"
         },
         flexRightItem: {
             flexGrow: "2"
         }
+    })
 
+    const mainFlexHeightAdjustment = () => {
+        let copy = styles;
+        const offsetTop = ref.current.offsetTop;
+        const newHeight = "calc(100% - 15px - 10px - " + offsetTop + "px)"
+        copy.mainFlex = {...copy.mainFlex, minHeight: newHeight, maxHeight: newHeight}
+        setStyles(copy)
     }
-
-    const {register: registerEdit, handleSubmit: handleSubmitEdit, formState: {errors: errorsEdit}, reset: resetEdit} = useForm();
-    const {register: registerFile, handleSubmit: handleSubmitFile, formState: {errors: errorsFile}, reset: resetFile} = useForm();
-
-    const [errMsg, setErrMsg] = useState('');
-    const [successfulMsg, setSuccessMsg] = useState('');
-
-    const [showPassword, setShowPassword] = useState(false);
-    const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [openFileDialog, setOpenFileDialog] = useState(false);
-    const [file, setFile] = useState(null);
-
-    const handleClickShowPassword = () => setShowPassword(!showPassword);
-    const handleMouseDownPassword = () => setShowPassword(!showPassword);
-
-    const navigate = useNavigate();
-
-    const [user, setUser] = useState(UserService.getCurrentUser);
-    const [rows, setRows] = useState([{property: 'Name:', data: user.nombre}, {property: 'Email:', data: user.email}]);
 
     function logout() {
         UserService.logOut();
@@ -97,6 +112,10 @@ const ProfilePage = () => {
     useEffect(() => {
         setRows([{property: 'Name:', data: user.nombre}, {property: 'Email:', data: user.email}]);
     }, [user])
+
+    useEffect(() => {
+        mainFlexHeightAdjustment();
+    }, [])
 
     const handleEditDialogOpen = () => {
         setOpenEditDialog(true);
@@ -157,6 +176,7 @@ const ProfilePage = () => {
             setOpenFileDialog(false);
             setFile(null);
             resetFile();
+            funcionCambio()
         }).catch(error => {
             if (error.request.status === 500){
                 setErrMsg('It occured an error trying to upload the file');
@@ -165,7 +185,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <Box sx={{height:"100%"}}>
+        <Box sx={styles.mainFlex} ref={ref}>
             <Box sx={styles.flexContainer}>
 
                 <Box sx={styles.flexLeftItem}>
@@ -177,7 +197,7 @@ const ProfilePage = () => {
                             alt="image"
                         />:<></>}
                     </IconButton>
-                    <Box mt={4}>
+                    <Box mt={4} sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                         <Button onClick={handleEditDialogOpen} sx={styles.buttonArea} variant="contained" fullWidth>
                             Edit profile
                         </Button>
@@ -189,7 +209,7 @@ const ProfilePage = () => {
 
                 <Box sx={styles.flexRightItem}>
                     <TableContainer>
-                        <Table sx={{ minWidth: 400, borderBottom: "none"}} aria-label="data table">
+                        <Table sx={{width:"250px"}} aria-label="data table">
                             <TableBody>
                                 {rows.map((row) => (
                                     <TableRow key={row.property} sx={ { '&:last-child td, &:last-child th': { border: 0 , borderBottom: "none"} }}>
@@ -283,10 +303,10 @@ const ProfilePage = () => {
                                 )
                             }}
                         />
-                        <Box>
-                            <Button sx={styles.buttonDialog} variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
-                            <Button sx={styles.buttonDialog} variant="contained"  type="submit">Confirm changes</Button>
-                        </Box>
+                        <DialogActions>
+                            <Button variant="outlined" onClick={handleEditDialogClose}>Cancel</Button>
+                            <Button variant="contained"  type="submit">Confirm changes</Button>
+                        </DialogActions>
                     </form>
                 </DialogContent>
             </Dialog>

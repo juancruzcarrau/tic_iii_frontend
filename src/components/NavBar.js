@@ -32,7 +32,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({dialogFunction, tableCreated}) => {
+const NavBar = ({tableCreated, estado}) => {
 
     const styles = {
         buttonArea: {
@@ -78,8 +78,7 @@ const NavBar = ({dialogFunction, tableCreated}) => {
     useEffect(() => {
         setProfilePicture(user.imagenUsuarioDto.foto)
         console.log("aca")
-    }, [user])
-
+    }, [estado])
     function logout() {
         UserService.logOut();
         navigate('/login')

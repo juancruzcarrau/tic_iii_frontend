@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
-import {Box, Drawer, Pagination, Paper, styled, TextField} from "@mui/material";
+import {Box} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import TableCard from "./TableCard";
 import HomePagination from "./HomePagination";
 import UserService from "../services/UserService";
 import {useParams} from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import {useForm} from "react-hook-form";
 
 
