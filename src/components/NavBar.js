@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,23 +7,20 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
 import '../App.css';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import {
-    Alert, CircularProgress,
+    Alert, CardMedia, CircularProgress,
     Collapse,
     Dialog,
-    DialogActions,
     DialogContent,
     DialogTitle, Fade,
-    Input,
     Slide,
     TextField
 } from "@mui/material";
@@ -35,7 +32,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({dialogFunction, tableCreated}) => {
+const NavBar = ({tableCreated, estado}) => {
 
     const styles = {
         buttonArea: {
@@ -66,9 +63,31 @@ const NavBar = ({dialogFunction, tableCreated}) => {
 
     const [errMsg, setErrMsg] = useState(false);
 
+    const [user, setUser] = useState(UserService.getCurrentUser);
+
+    const [profilePicture, setProfilePicture] = useState(user.imagenUsuarioDto.foto);
+
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const [anchorElUser1, setAnchorElUser1] = useState(null);
+
+    const [recentTables, setRecentTables] = useState(null);
+
+    const [file, setFile] = useState(null);
+
+    useEffect(() => {
+        setProfilePicture(user.imagenUsuarioDto.foto)
+        console.log("aca")
+    }, [estado])
+
     function logout() {
         UserService.logOut();
         navigate('/login')
+    }
+
+    function profile() {
+        handleCloseUserMenu();
+        navigate(`/profile/${user.id}`)
     }
 
     function handleClickCreateOpen() {
@@ -96,17 +115,6 @@ const NavBar = ({dialogFunction, tableCreated}) => {
     const handleCloseMenu = (event) => {
         setAnchorElUser1(null)
     }
-
-    const [anchorElUser, setAnchorElUser] = useState(null);
-
-    const [anchorElUser1, setAnchorElUser1] = useState(null);
-
-    const [recentTables, setRecentTables] = useState(null);
-
-
-    const [file, setFile] = useState(null);
-
-    const user = UserService.getCurrentUser();
 
     const [anchorEl2, setAnchorEl2] = React.useState(null);
     const open = Boolean(anchorEl2);
@@ -151,7 +159,6 @@ const NavBar = ({dialogFunction, tableCreated}) => {
             }
         });
     }
-
 
     const changeFile = (event) => {
         setFile(event.target.files[0]);
@@ -364,7 +371,12 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" />
+                                {user.imagenUsuarioDto?<CardMedia
+                                    sx={{display: 'inline-block', position: 'relative', width: '45px', height: '45px', overflow: 'hidden', borderRadius: '50%'}}
+                                    component="img"
+                                    image={`data:image/jpeg;base64,${profilePicture}`}
+                                    alt="image"
+                                />:<></>}
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -383,11 +395,14 @@ const NavBar = ({dialogFunction, tableCreated}) => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                          >
-                            <MenuItem onClick={logout}>
-                                <Typography textAlign="center">Logout</Typography>
+                            <MenuItem onClick={profile}>
+                                <Typography textAlign="center">Profile</Typography>
                             </MenuItem>
                             <MenuItem onClick={hanldeArchivedTables}>
                                 <Typography textAlign="center">Archived</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={logout}>
+                                <Typography textAlign="center">Logout</Typography>
                             </MenuItem>
                         </Menu>
                     </Box>
