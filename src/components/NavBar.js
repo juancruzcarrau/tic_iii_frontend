@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
+import avatar from "../misc/default-avatar.jpg";
 import '../App.css';
 import {Link, useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
@@ -65,7 +66,7 @@ const NavBar = ({tableCreated, estado}) => {
 
     const [user, setUser] = useState(UserService.getCurrentUser);
 
-    const [profilePicture, setProfilePicture] = useState(user.imagenUsuarioDto.foto);
+    const [profilePicture, setProfilePicture] = useState(null);
 
     const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -76,9 +77,15 @@ const NavBar = ({tableCreated, estado}) => {
     const [file, setFile] = useState(null);
 
     useEffect(() => {
-        setProfilePicture(user.imagenUsuarioDto.foto)
-        console.log("aca")
-    }, [estado])
+        if (user.imagenUsuarioDto != null) {
+            setProfilePicture(user.imagenUsuarioDto.foto)
+        }
+        else {
+            setProfilePicture(avatar)
+        }
+
+        console.log(profilePicture)
+    }, [])
 
     function logout() {
         UserService.logOut();
@@ -371,10 +378,10 @@ const NavBar = ({tableCreated, estado}) => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                {user.imagenUsuarioDto?<CardMedia
+                                {profilePicture?<CardMedia
                                     sx={{display: 'inline-block', position: 'relative', width: '45px', height: '45px', overflow: 'hidden', borderRadius: '50%'}}
                                     component="img"
-                                    image={`data:image/jpeg;base64,${profilePicture}`}
+                                    image={user.imagenUsuarioDto != null ? `data:image/jpeg;base64,${profilePicture}`: profilePicture}
                                     alt="image"
                                 />:<></>}
                             </IconButton>
