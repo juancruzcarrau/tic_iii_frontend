@@ -7,7 +7,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Button from "@mui/material/Button";
 import List from "./List";
-import {Checkbox, ClickAwayListener, Paper, TextField} from "@mui/material";
+import {ClickAwayListener, Paper, TextField} from "@mui/material";
 import DivisorLine from "./DivisorLine";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -183,7 +183,7 @@ const Board = () => {
                 {board.listas.map((list) => {
                     return(
                         <Box sx={styles.listaBox} key={list.posicion}>
-                            <List listData={list}/>
+                            <List listDataProps={list}/>
                         </Box>
                     )
                 })}
