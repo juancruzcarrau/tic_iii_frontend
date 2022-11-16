@@ -1,4 +1,4 @@
-import {Alert, Collapse, Dialog, FormControlLabel, Paper, TextField} from "@mui/material";
+import {Dialog, FormControlLabel, Paper, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import Box from "@mui/material/Box";
@@ -10,14 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 
 const Card = ({cardDataProps, updateCardInList}) => {
 
-    const [styles, setStyles] = useState({
-        mainPaper: {
-            padding: "7px",
-            cursor: "pointer",
-            "&:hover": {
-                filter: "brightness(90%)"
-            }
-        },
+    const styles = {
         dialogPaperProps: {
             style: {
                 padding: "20px",
@@ -68,14 +61,13 @@ const Card = ({cardDataProps, updateCardInList}) => {
         checkBox: {
             fontFamily: "system-ui"
         }
-    })
+    }
 
     const [cardData, setCardData] = useState(cardDataProps)
     const [isCardExpanded, setIsCardExpanded] = useState(false)
     const {register, handleSubmit, reset, setValue, getValues} = useForm();
     const [stateBeforeLastUpdate, setStateBeforeLastUpdate] = useState()
     const [date, setDate] = useState(null)
-    const [alert, setAlert] = useState(false)
     const [completed, setCompleted] = useState(false)
 
     const expandCard = () => {
@@ -105,7 +97,6 @@ const Card = ({cardDataProps, updateCardInList}) => {
                 setCardData(newCardData)
                 updateCardInList(newCardData)
             })
-            setAlert(true)
             setStateBeforeLastUpdate(newCardData)
         }
     }
@@ -115,48 +106,48 @@ const Card = ({cardDataProps, updateCardInList}) => {
             e.target.blur()
         }
     }
-    const updateBackgroundColor = () => {
-        console.log("Completed: ", completed)
-        let newStyles = styles
-        if (completed) {
-            newStyles.mainPaper.backgroundColor = "#edf7ed"
-        } else {
-            console.log(date)
-            if (date !== null) {
-                console.log("Has relevant date")
-                const differenceInDays = (date.getTime() - (new Date()).getTime())/(1000 * 3600 * 24)
-                console.log(differenceInDays)
-                if (differenceInDays > 1) {
-                    newStyles.mainPaper.backgroundColor = "white"
-                } else if (differenceInDays > 0) {
-                    newStyles.mainPaper.backgroundColor = "#fff4e5"
-                } else {
-                    newStyles.mainPaper.backgroundColor = "#fdeded"
-                }
-            } else {
-                newStyles.mainPaper.backgroundColor = "white"
+    const mainPaperStyle = () => {
+        let style = {
+            padding: "10px",
+            cursor: "pointer",
+            boxShadow: "0px 0px 119px -26px rgba(0,0,0,0.75)",
+            "&:hover": {
+                filter: "brightness(97%)"
             }
         }
-        setStyles(newStyles)
+
+        if (completed) {
+            style.borderLeft = 6
+            style.borderColor = "#4baf4d"
+            style.paddingLeft = "7px"
+        } else {
+            if (date !== null) {
+                const differenceInDays = (date.getTime() - (new Date()).getTime())/(1000 * 3600 * 24)
+                if (differenceInDays > 1) {
+                    //Do nothing
+                } else if (differenceInDays > 0) {
+                    style.borderLeft = 6
+                    style.borderColor = "#fff304"
+                    style.paddingLeft = "7px"
+                } else {
+                    style.borderLeft = 6
+                    style.borderColor = "#e55b4a"
+                    style.paddingLeft = "7px"
+                }
+            }
+        }
+
+        return style
     }
 
     useEffect(() => {
         reset(setupDataForCard())
         setStateBeforeLastUpdate(setupDataForCard())
     }, [])
-    useEffect(() => {
-        setTimeout(async () => {
-           await setAlert(false)
-        }, 3000)
-    }, [alert])
-    useEffect(() => {
-        updateBackgroundColor()
-    }, [completed, date])
-
 
     return(
         <>
-            <Paper sx={styles.mainPaper} onClick={expandCard}>
+            <Paper sx={mainPaperStyle()} onClick={expandCard}>
                 {cardData.titulo}
             </Paper>
 
@@ -201,8 +192,10 @@ const Card = ({cardDataProps, updateCardInList}) => {
                                     inputFormat="DD-MM-YYYY"
                                     value={date}
                                     onChange={(newDate) => {
-                                        setValue("date", newDate)
-                                        setDate(newDate)
+                                        const parsedDate = new Date(newDate.$y, newDate.$M, newDate.$D)
+                                        setValue("date", parsedDate)
+                                        setDate(parsedDate)
+                                        console.log(parsedDate)
                                         updateCard(getValues())
                                     }}
                                     renderInput={(params) =>
@@ -222,10 +215,6 @@ const Card = ({cardDataProps, updateCardInList}) => {
                                                                  }}/>}
                                               label="Completed"/>
                         </Box>
-
-                        <Collapse in={alert}>
-                            <Alert severity="success">Card updated successfully!</Alert>
-                        </Collapse>
                     </Box>
                 </form>
             </Dialog>
