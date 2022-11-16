@@ -23,8 +23,6 @@ const MainPage = () => {
     function cambiarEstado(){
         setCambio(!cambio);
     }
-
-
     function tableCreatedFunc(){
         setTableCreated(!tableCreated)
     }
@@ -37,7 +35,7 @@ const MainPage = () => {
                 <Route path='/' element={ <Navigate to="/home" /> }/>
                 <Route path="/:type" element={<HomePage tableCreated={tableCreated} />}/>
                 <Route path="/board/:id" element={<Board/>}/>
-                <Route path="/profile/:id" element={<ProfilePage funcionCambio={cambiarEstado} />}/>
+                <Route path="/profile/:id" element={<ProfilePage funcionCambio={() => cambiarEstado()} />}/>
             </Routes>
         </Box>
     );

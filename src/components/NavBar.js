@@ -79,6 +79,7 @@ const NavBar = ({tableCreated, estado}) => {
         setProfilePicture(user.imagenUsuarioDto.foto)
         console.log("aca")
     }, [estado])
+
     function logout() {
         UserService.logOut();
         navigate('/login')
@@ -373,7 +374,7 @@ const NavBar = ({tableCreated, estado}) => {
                                 {user.imagenUsuarioDto?<CardMedia
                                     sx={{display: 'inline-block', position: 'relative', width: '45px', height: '45px', overflow: 'hidden', borderRadius: '50%'}}
                                     component="img"
-                                    image={`data:image/jpeg;base64,${user.imagenUsuarioDto.foto}`}
+                                    image={`data:image/jpeg;base64,${profilePicture}`}
                                     alt="image"
                                 />:<></>}
                             </IconButton>
