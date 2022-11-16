@@ -9,7 +9,7 @@ import {useForm} from "react-hook-form";
 import CloseIcon from '@mui/icons-material/Close';
 import CardService from "../services/CardService";
 
-const List = ({listData}) => {
+const List = ({listDataProps}) => {
 
     const styles = {
         list: {
@@ -60,6 +60,7 @@ const List = ({listData}) => {
         }
     }
 
+    const [listData, setListData] = useState(listDataProps)
     const [addNewCardIsIdle, setAddNewCardIsIdle] = useState(true)
     const {register, handleSubmit, reset} = useForm();
 
@@ -75,12 +76,22 @@ const List = ({listData}) => {
     const addNewCard = async (data) => {
         if(data.title){
             // If there is a title introduced
+            data = {...data, title: data.title.trim()}
             data = {...data, listId: listData.id}
             const newCard = await CardService.addNewCard(data)
             listData.tarjetas.push(newCard)
             reset()
             addNewCardOnClickAway()
         }
+    }
+
+    const updateCard = (newCardData) => {
+        setListData((listData) => {
+            listData.tarjetas = listData.tarjetas.map(tarjeta => {
+                return tarjeta.id === newCardData.id ? newCardData : tarjeta
+            })
+            return listData
+        })
     }
 
     return(
@@ -99,7 +110,7 @@ const List = ({listData}) => {
                         {listData.tarjetas.map(card => {
                             return(
                                 <div key={card.posicion}>
-                                    <Card cardData={card}/>
+                                    <Card cardDataProps={card} updateCardInList={updateCard}/>
                                 </div>
                             )
                         })}
@@ -131,7 +142,7 @@ const List = ({listData}) => {
 
                         <Box sx={styles.addNewCardButtonsFlex}>
 
-                            <Button sx={{fontFamily: "system-ui", textTransform: "none",}}
+                            <Button sx={{fontFamily: "system-ui", textTransform: "none"}}
                                     variant="contained"
                                     disableElevation
                                     type="submit">
