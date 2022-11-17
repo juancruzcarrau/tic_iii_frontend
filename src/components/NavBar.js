@@ -33,7 +33,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({tableCreated, estado}) => {
+const NavBar = ({tableCreated}) => {
 
     const styles = {
         buttonArea: {
@@ -83,8 +83,6 @@ const NavBar = ({tableCreated, estado}) => {
         else {
             setProfilePicture(avatar)
         }
-
-        console.log(profilePicture)
     }, [])
 
     function logout() {
@@ -152,7 +150,7 @@ const NavBar = ({tableCreated, estado}) => {
         const formData = new FormData()
         formData.append('mailUsuario', user.email);
         formData.append('nombre', data.nombre);
-        formData.append('id_imagen', 15);
+        formData.append('id_imagen', 1);
         formData.append('imagen', file);
 
         BoardService.create(formData).then(() => {

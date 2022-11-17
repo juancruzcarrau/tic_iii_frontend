@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import BoardService from "../services/BoardService";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -13,6 +13,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import {useForm} from "react-hook-form";
 import ListService from "../services/ListService";
+import UserService from "../services/UserService";
 
 const Board = () => {
 
@@ -98,6 +99,9 @@ const Board = () => {
         }
     })
 
+    const navigate = useNavigate();
+    const user = UserService.getCurrentUser()
+
     const { id } = useParams();
     const [board, setBoard] = useState({listas: []});
     const ref = useRef(null);
@@ -116,8 +120,11 @@ const Board = () => {
             .then(board => {
                 setBoard(board)
                 setBackgroundImage(board)
+                validateURL(board)
             })
-            .catch(error => console.log(error))
+            .catch(error =>
+                navigate('/pagenotfound/404')
+            )
     }
     const mainFlexHeightAdjustment = () => {
         let copy = styles;
@@ -135,6 +142,12 @@ const Board = () => {
             backgroundPosition: "center"
         }
         setStyles(copy)
+    }
+
+    const validateURL = (board) => {
+        if (board.mailUsuario !== user.email) {
+            navigate('/pagenotfound/404')
+        }
     }
 
     const addNewListOnClick = () => {
