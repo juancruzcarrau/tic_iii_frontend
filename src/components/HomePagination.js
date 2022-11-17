@@ -2,12 +2,15 @@ import React, {useEffect, useState} from 'react';
 import tableService from "../services/BoardService";
 import {Box, Pagination} from "@mui/material";
 import UserService from "../services/UserService";
+import {useNavigate} from "react-router-dom";
 
 const pageSize = 8;
 
 const HomePagination = ({setTables, tableCreated, tableChange, type}) => {
 
     const user = UserService.getCurrentUser()
+
+    const navigate = useNavigate();
 
     const [pagination, setPagination] = useState({
         count: 0,
@@ -31,12 +34,15 @@ const HomePagination = ({setTables, tableCreated, tableChange, type}) => {
                         setTables(res.data);
                     })
                 break
-            default:
+            case 'home':
                 tableService.getAll(user.email, "desc", pagination.from, pagination.to)
                     .then(res => {
                         setPagination({...pagination, count: res.totalElements});
                         setTables(res.data);
                     })
+                break
+            default:
+                navigate('/pagenotfound/404')
                 break
         }
     }, [tableCreated ,pagination.from, pagination.to, tableChange, type]);

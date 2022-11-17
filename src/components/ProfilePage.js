@@ -15,8 +15,9 @@ import {useNavigate} from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Box from "@mui/material/Box";
+import avatar from "../misc/default-avatar.jpg";
 
-const ProfilePage = ({funcionCambio}) => {
+const ProfilePage = () => {
 
     const {register: registerEdit, handleSubmit: handleSubmitEdit, formState: {errors: errorsEdit}, reset: resetEdit} = useForm();
     const {register: registerFile, handleSubmit: handleSubmitFile, formState: {errors: errorsFile}, reset: resetFile} = useForm();
@@ -28,6 +29,7 @@ const ProfilePage = ({funcionCambio}) => {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openFileDialog, setOpenFileDialog] = useState(false);
     const [file, setFile] = useState(null);
+    const [profilePicture, setProfilePicture] = useState(null);
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -95,6 +97,23 @@ const ProfilePage = ({funcionCambio}) => {
             flexGrow: "2"
         }
     })
+
+    useEffect(() => {
+
+        let path = window.location.pathname
+        const splittedPath = path.split("/")
+
+        if (splittedPath[2] != user.id) {
+            navigate('/pagenotfound/404')
+        }
+
+        if (user.imagenUsuarioDto != null) {
+            setProfilePicture(user.imagenUsuarioDto.foto)
+        }
+        else {
+            setProfilePicture(avatar)
+        }
+    }, [])
 
     const mainFlexHeightAdjustment = () => {
         let copy = styles;
@@ -166,6 +185,10 @@ const ProfilePage = ({funcionCambio}) => {
 
     }
 
+    function refreshPage() {
+        window.location.reload(false);
+    }
+
     const handleFile = (data) => {
         const formData = new FormData()
         formData.append('email', user.email);
@@ -176,7 +199,7 @@ const ProfilePage = ({funcionCambio}) => {
             setOpenFileDialog(false);
             setFile(null);
             resetFile();
-            funcionCambio()
+            refreshPage()
         }).catch(error => {
             if (error.request.status === 500){
                 setErrMsg('It occured an error trying to upload the file');
@@ -190,10 +213,10 @@ const ProfilePage = ({funcionCambio}) => {
 
                 <Box sx={styles.flexLeftItem}>
                     <IconButton onClick={handleFileDialogOpen}>
-                        {user.imagenUsuarioDto?<CardMedia
+                        {profilePicture?<CardMedia
                             sx={{display: 'inline-block', position: 'relative', width: '200px', height: '200px', overflow: 'hidden', borderRadius: '50%'}}
                             component="img"
-                            image={`data:image/jpeg;base64,${user.imagenUsuarioDto.foto}`}
+                            image={user.imagenUsuarioDto != null ? `data:image/jpeg;base64,${profilePicture}`: profilePicture}
                             alt="image"
                         />:<></>}
                     </IconButton>
