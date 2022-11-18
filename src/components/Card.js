@@ -1,14 +1,16 @@
 import {Dialog, FormControlLabel, Paper, TextField} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import React, {useEffect, useState, useCallback} from "react";
+import {set, useForm} from "react-hook-form";
 import Box from "@mui/material/Box";
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import cardService from "../services/CardService";
 import Checkbox from '@mui/material/Checkbox';
+import Button from "@mui/material/Button";
+import DeleteIcon from '@mui/icons-material/Delete';
+import CardService from "../services/CardService";
 
-
-const Card = ({cardDataProps, updateCardInList}) => {
+const Card = ({cardDataProps, updateCardInList, deleteCardInList}) => {
 
     const styles = {
         dialogPaperProps: {
@@ -60,7 +62,11 @@ const Card = ({cardDataProps, updateCardInList}) => {
         },
         checkBox: {
             fontFamily: "system-ui"
-        }
+        },
+        actionsFlexBox: {
+            display: "flex",
+            justifyContent: "flex-end",
+        },
     }
 
     const [cardData, setCardData] = useState(cardDataProps)
@@ -70,13 +76,15 @@ const Card = ({cardDataProps, updateCardInList}) => {
     const [date, setDate] = useState(null)
     const [completed, setCompleted] = useState(false)
 
-    const expandCard = () => {
+    //Dialogs
+    const expandCard = useCallback(() => {
         setIsCardExpanded(true)
-    }
-    const closeCard = () => {
+    }, [setIsCardExpanded]);
+    const closeCard = useCallback(() => {
         setIsCardExpanded(false)
-    }
+    }, [setIsCardExpanded]);
 
+    //Card functions
     const setupDataForCard = () => {
         const date = cardData.fechaVencimiento != null ?
             new Date(cardData.fechaVencimiento[0], cardData.fechaVencimiento[1] - 1, cardData.fechaVencimiento[2]):
@@ -106,11 +114,11 @@ const Card = ({cardDataProps, updateCardInList}) => {
             e.target.blur()
         }
     }
-    const mainPaperStyle = () => {
+    const mainPaperStyle = useCallback(() => {
         let style = {
             padding: "10px",
             cursor: "pointer",
-            boxShadow: "0px 0px 119px -26px rgba(0,0,0,0.75)",
+            position: "relative",
             "&:hover": {
                 filter: "brightness(97%)"
             }
@@ -138,16 +146,81 @@ const Card = ({cardDataProps, updateCardInList}) => {
         }
 
         return style
-    }
+    }, [completed, date]);
+    const deleteCard = useCallback(() => {
+        CardService.deleteCard(cardData.id)
+            .then((cardId) => {
+                closeCard()
+                deleteCardInList(cardId)
+            })
+    }, [cardData])
 
+    //useEffects
     useEffect(() => {
         reset(setupDataForCard())
         setStateBeforeLastUpdate(setupDataForCard())
     }, [])
 
+    // optionsButton: {
+    //     minWidth:0,
+    //         minHeight: 0,
+    //         padding: "2px",
+    //         position: "absolute",
+    //         color: "#808080",
+    //         zIndex: 1,
+    //         right: 5,
+    //         top: 5,
+    //         '&:hover':{
+    //         backgroundColor: 'rgb(0, 0, 0, 0.1)'
+    //     }
+    // const [hovering, setHovering] = useState(false)
+    // const [anchorEl, setAnchorEl] = useRef(null);
+    // const openMenu = Boolean(anchorEl);
+    //
+    // //Card menu functions
+    // const handleClick = useCallback((event) => {
+    //     console.log(1)
+    //     event.stopPropagation();
+    //     event.nativeEvent.stopImmediatePropagation();
+    //     setAnchorEl(() =>   event.currentTarget);
+    //     // console.log("Hello")
+    // }, [setAnchorEl]);
+    // const handleClose = useCallback(() => {
+    //     setAnchorEl(null);
+    // }, [setAnchorEl]);
+    //
+    // const onMouseEnter = useCallback(() => setHovering(true), [setHovering]);
+    // const onMouseLeave = useCallback(() => setHovering(false), [setHovering]);
+    //
+    // {!!anchorEl && <Menu id="card-menu"
+    //                      anchorEl={anchorEl}
+    //                      open={openMenu}
+    //                      onClose={handleClose}
+    //                      MenuListProps={{
+    //                          'aria-labelledby': 'card-button',
+    //                      }}>
+    //     {cardOptions.map((option) => {
+    //         return(
+    //             <MenuItem key={option.name} onClick={option.action}>{option.name}</MenuItem>
+    //         )
+    //     })}
+    // </Menu> }
+    //
+    // {hovering &&
+    // <Button variant="filled"
+    //         id="card-button"
+    //         sx={styles.optionsButton}
+    //         aria-controls={openMenu ? 'card-menu' : undefined}
+    //         aria-haspopup="true"
+    //         aria-expanded={openMenu ? 'true' : undefined}
+    //         onClick={handleClick}>
+    //     <MoreVertIcon/>
+    // </Button>
+    // }
+
     return(
         <>
-            <Paper sx={mainPaperStyle()} onClick={expandCard}>
+            <Paper sx={mainPaperStyle()} onClick={expandCard} elevation={0}>
                 {cardData.titulo}
             </Paper>
 
@@ -177,7 +250,7 @@ const Card = ({cardDataProps, updateCardInList}) => {
                             fullWidth
                             multiline
                             minRows={5}
-                            maxRows={15}
+                            maxRows={10}
                             inputProps={{style: {padding: 0}}}
                             InputProps={styles.descriptionInputProps}
                             InputLabelProps={styles.inputLabelProps}
@@ -214,6 +287,12 @@ const Card = ({cardDataProps, updateCardInList}) => {
                                                                      updateCard(getValues())
                                                                  }}/>}
                                               label="Completed"/>
+
+                            <Button variant="filled"
+                                    id="card-button"
+                                    onClick={deleteCard}>
+                                <DeleteIcon/>
+                            </Button>
                         </Box>
                     </Box>
                 </form>
@@ -221,5 +300,47 @@ const Card = ({cardDataProps, updateCardInList}) => {
         </>
     )
 }
+
+//
+// const PaperWithHoverMenu = ({onClick, children}) => {
+//     const [hovering, setHovering] = useState(false);
+//     const anchor = useRef(null);
+//     const onMouseEnter = useCallback(() => setHovering(true), [setHovering])
+//     const onMouseLeave = useCallback(() => setHovering(false), [setHovering])
+//
+//     const handleClose = useCallback(() => anchor.current = null, [])
+//
+//     const onButtonClick = useCallback((event) => {
+//         console.log("button clicked");
+//         anchor.current = event.currentTarget;
+//         event.stopPropagation();
+//     }, [])
+//
+//     return (<Paper onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} sx={{backgroundColor: hovering ? "red" : "blue"}}>
+//         {hovering && <Button variant="filled"
+//                         id="card-button"
+//                         sx={{
+//                             ...styles.optionsButton,
+//                             position: 'relative',
+//                         }}
+//                         onClick={onButtonClick}>
+//                     <MoreVertIcon/>
+//                 </Button> }
+//         {children}
+//
+//             {!!anchor.current && <Menu id="card-menu"
+//                   anchorEl={anchor.current}
+//                   open={true}
+//                   onClose={handleClose}
+//                   >
+//                 {cardOptions.map((option) => {
+//                     return(
+//                         <MenuItem key={option.name} onClick={option.action}>{option.name}</MenuItem>
+//                     )
+//                 })}
+//             </Menu> }
+//
+//     </Paper>)
+// }
 
 export default Card

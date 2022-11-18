@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Card from "./Card";
 import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import CloseIcon from '@mui/icons-material/Close';
 import CardService from "../services/CardService";
@@ -63,12 +63,12 @@ const List = ({listDataProps}) => {
     const [listData, setListData] = useState(listDataProps)
     const [addNewCardIsIdle, setAddNewCardIsIdle] = useState(true)
     const {register, handleSubmit, reset} = useForm();
+    const [update, setUpdate] = useState(1)
 
 
     const addNewCardOnClick = () => {
         setAddNewCardIsIdle(false)
     }
-
     const addNewCardOnClickAway = () => {
         setAddNewCardIsIdle(true)
     }
@@ -76,15 +76,17 @@ const List = ({listDataProps}) => {
     const addNewCard = async (data) => {
         if(data.title){
             // If there is a title introduced
-            data = {...data, title: data.title.trim()}
-            data = {...data, listId: listData.id}
+            data = {...data, title: data.title.trim(), listId: listData.id}
             const newCard = await CardService.addNewCard(data)
-            listData.tarjetas.push(newCard)
+            console.log(newCard)
+            setListData((listData) => {
+                listData.tarjetas.push(newCard)
+                return listData
+            })
             reset()
             addNewCardOnClickAway()
         }
     }
-
     const updateCard = (newCardData) => {
         setListData((listData) => {
             listData.tarjetas = listData.tarjetas.map(tarjeta => {
@@ -92,6 +94,13 @@ const List = ({listDataProps}) => {
             })
             return listData
         })
+    }
+    const deleteCard = (cardId) => {
+        setListData((listData) => {
+            listData.tarjetas = listData.tarjetas.filter(tarjeta => tarjeta.id !== cardId).map(tarjeta => tarjeta)
+            return listData
+        })
+        setUpdate(value => value + 1)
     }
 
     return(
@@ -110,7 +119,7 @@ const List = ({listDataProps}) => {
                         {listData.tarjetas.map(card => {
                             return(
                                 <div key={card.posicion}>
-                                    <Card cardDataProps={card} updateCardInList={updateCard}/>
+                                    <Card cardDataProps={card} updateCardInList={updateCard} deleteCardInList={deleteCard}/>
                                 </div>
                             )
                         })}
@@ -127,7 +136,7 @@ const List = ({listDataProps}) => {
             :
                 <ClickAwayListener onClickAway={addNewCardOnClickAway}>
                     <form noValidate autoComplete="off" onSubmit={handleSubmit(addNewCard)}>
-                        <Paper>
+                        <Paper sx={{boxShadow: "0px 0px 119px -26px rgba(0,0,0,0.75)",}}>
                             <TextField
                                 variant="standard"
                                 multiline
@@ -135,8 +144,8 @@ const List = ({listDataProps}) => {
                                 maxRows={3}
                                 fullWidth
                                 {...register("title")}
-                                InputProps={{style: {fontFamily: "system-ui", padding: "7px"}, disableUnderline: true}}
-                                InputLabelProps={{style: {fontFamily: "system-ui",padding: "7px"}}}>
+                                InputProps={{style: {fontFamily: "system-ui", padding: "10px"}, disableUnderline: true}}
+                                InputLabelProps={{style: {fontFamily: "system-ui",padding: "10px"}}}>
                             </TextField>
                         </Paper>
 
