@@ -26,7 +26,7 @@ const Login = () => {
         }
     }
 
-    const {register, handleSubmit, formState: {errors}} = useForm();
+    const {register, handleSubmit, formState: {errors}, clearErrors} = useForm();
 
     const emailRef = useRef()
     const [errMsg, setErrMsg] = useState('');
@@ -44,19 +44,26 @@ const Login = () => {
 
     function sucessfulSignUp() {
         setSuccessMsg("Successfully signed up");
+        clearErrors()
+    }
+
+    function unsetSuccess() {
+        setSuccessMsg("");
+        clearErrors()
     }
 
     useEffect(() => {
-       emailRef.current.focus();
-    }, [])
-
-    useEffect(() => {
+        emailRef.current.focus()
         setErrMsg('');
     }, [])
+
 
     const authenticateUser = (data) => {
 
         setErrMsg("");
+        unsetSuccess( () => {
+            sucessfulSignUp()
+        })
 
         UserService.authenticate(data)
             .then(res => {
@@ -81,6 +88,7 @@ const Login = () => {
 
             <Collapse in={errMsg.length !== 0} sx={styles.alert}>
                 <Alert severity='error'>{errMsg}</Alert>
+
             </Collapse>
 
             <Collapse in={successfulMsg.length !== 0} sx={styles.alert}>

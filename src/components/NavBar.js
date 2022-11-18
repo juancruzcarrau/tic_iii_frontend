@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,23 +7,23 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from "../misc/logo-blanco-sin-fondo.png";
+import avatar from "../misc/default-avatar.jpg";
 import '../App.css';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
 import AddIcon from '@mui/icons-material/Add';
 
 import {
-    Alert, CircularProgress,
+    Alert, CardMedia, CircularProgress,
     Collapse,
     Dialog,
-    DialogActions,
     DialogContent,
+    DialogTitle, Fade,
     DialogTitle, Fab, Fade,
     Input,
     Slide,
@@ -32,8 +32,6 @@ import {
 import BoardService from "../services/BoardService";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RecentTableCard from "./RecentTableCard";
-import ImageService from "../services/ImageService";
-import DefautImage from "./DefautImage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -92,9 +90,35 @@ const NavBar = ({tableCreated}) => {
             setDefaultImages(res)})
     },[])
 
+    const [user, setUser] = useState(UserService.getCurrentUser);
+
+    const [profilePicture, setProfilePicture] = useState(null);
+
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const [anchorElUser1, setAnchorElUser1] = useState(null);
+
+    const [recentTables, setRecentTables] = useState(null);
+
+    const [file, setFile] = useState(null);
+
+    useEffect(() => {
+        if (user.imagenUsuarioDto != null) {
+            setProfilePicture(user.imagenUsuarioDto.foto)
+        }
+        else {
+            setProfilePicture(avatar)
+        }
+    }, [])
+
     function logout() {
         UserService.logOut();
         navigate('/login')
+    }
+
+    function profile() {
+        handleCloseUserMenu();
+        navigate(`/profile/${user.id}`)
     }
 
     function handleClickCreateOpen() {
@@ -123,17 +147,6 @@ const NavBar = ({tableCreated}) => {
     const handleCloseMenu = (event) => {
         setAnchorElUser1(null)
     }
-
-    const [anchorElUser, setAnchorElUser] = useState(null);
-
-    const [anchorElUser1, setAnchorElUser1] = useState(null);
-
-    const [recentTables, setRecentTables] = useState(null);
-
-
-    const [file, setFile] = useState(null);
-
-    const user = UserService.getCurrentUser();
 
     const [anchorEl2, setAnchorEl2] = React.useState(null);
     const open = Boolean(anchorEl2);
@@ -410,7 +423,12 @@ const NavBar = ({tableCreated}) => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" />
+                                {profilePicture?<CardMedia
+                                    sx={{display: 'inline-block', position: 'relative', width: '45px', height: '45px', overflow: 'hidden', borderRadius: '50%'}}
+                                    component="img"
+                                    image={user.imagenUsuarioDto != null ? `data:image/jpeg;base64,${profilePicture}`: profilePicture}
+                                    alt="image"
+                                />:<></>}
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -430,11 +448,14 @@ const NavBar = ({tableCreated}) => {
                             onClose={handleCloseUserMenu}
                             PaperProps={{sx:{borderRadius: "10px"}}}
                          >
-                            <MenuItem onClick={logout}>
-                                <Typography textAlign="center">Logout</Typography>
+                            <MenuItem onClick={profile}>
+                                <Typography textAlign="center">Profile</Typography>
                             </MenuItem>
                             <MenuItem onClick={hanldeArchivedTables}>
                                 <Typography textAlign="center">Archived</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={logout}>
+                                <Typography textAlign="center">Logout</Typography>
                             </MenuItem>
                         </Menu>
                     </Box>

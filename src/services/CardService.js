@@ -9,6 +9,16 @@ const CardService = {
             .catch(error => {
                 throw error
             })
+    },
+
+    updateCard: async (data) => {
+        return await axios.patch(process.env.REACT_APP_BACKEND_URL + "/tableros/listas/tarjetas", data)
+            .then(response => {
+                return response.data
+            })
+            .catch(error => {
+                throw error
+            })
     }
 }
 

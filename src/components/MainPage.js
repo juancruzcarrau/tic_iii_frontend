@@ -4,6 +4,8 @@ import HomePage from "./HomePage";
 import {Navigate, Route, Routes} from "react-router-dom";
 import Board from "./Board";
 import Box from "@mui/material/Box";
+import ProfilePage from "./ProfilePage";
+import ErrorPage from "./ErrorPage";
 
 const MainPage = () => {
 
@@ -17,19 +19,19 @@ const MainPage = () => {
 
     const [tableCreated, setTableCreated] = useState(false);
 
-
     function tableCreatedFunc(){
         setTableCreated(!tableCreated)
     }
 
-
     return (
         <Box sx={styles.mainPage}>
-            <NavBar tableCreated={() => tableCreatedFunc()}/>
+            <NavBar tableCreated={() => tableCreatedFunc()} />
             <Routes>
                 <Route path='/' element={ <Navigate to="/home" /> }/>
                 <Route path="/:type" element={<HomePage tableCreated={tableCreated} />}/>
                 <Route path="/board/:id" element={<Board/>}/>
+                <Route path="/profile/:id" element={<ProfilePage />}/>
+                <Route path="/*" element={<ErrorPage />} />
             </Routes>
         </Box>
     );
