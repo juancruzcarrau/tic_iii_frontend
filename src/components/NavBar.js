@@ -24,7 +24,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle, Fade,
-    DialogTitle, Fab, Fade,
     Input,
     Slide,
     TextField
@@ -32,6 +31,8 @@ import {
 import BoardService from "../services/BoardService";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RecentTableCard from "./RecentTableCard";
+import ImageService from "../services/ImageService";
+import DefautImage from "./DefautImage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -174,7 +175,7 @@ const NavBar = ({tableCreated}) => {
     };
 
     const handleCreate = (data) => {
-        if (defaultImageSelected === 9999) {
+        if (defaultImageSelected === 9999 && file === null) {
             setFaltaImagen(true)
         }else {
             const formData = new FormData()
