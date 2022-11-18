@@ -103,6 +103,7 @@ const TableCard = ({tablero, tableChange}) => {
                         anchorEl={anchorEl}
                         open={open}
                         onClose={handleClose}
+                        PaperProps={{sx:{borderRadius: "10px"}}}
                     >
                         {tablero.archivado? <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}} onClick={reStoreTable} >Restore</MenuItem>:
                             <MenuItem sx={{marginRight: "10px", marginLeft: "10px"}}

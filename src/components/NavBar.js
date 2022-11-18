@@ -346,6 +346,7 @@ const NavBar = ({tableCreated}) => {
                                 vertical: 'top',
                                 horizontal: 'center',
                             }}
+                            PaperProps={{sx:{borderRadius: "10px"}}}
                         >
                             <Box style={{ width: "270px",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
                                 {recentTables ? recentTables.map((element) => {
@@ -358,7 +359,7 @@ const NavBar = ({tableCreated}) => {
                         </Button>
                     </Box>
 
-                    <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition}>
+                    <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition} PaperProps={{sx:{borderRadius: "10px"}}}>
                         <DialogTitle sx={{padding: "16px 24px 0px 24px"}}>Create Table</DialogTitle>
                         <Collapse in={errMsg}>
                             <Alert severity='error'>There was an unexpected error</Alert>
@@ -427,6 +428,7 @@ const NavBar = ({tableCreated}) => {
                             }}
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
+                            PaperProps={{sx:{borderRadius: "10px"}}}
                          >
                             <MenuItem onClick={logout}>
                                 <Typography textAlign="center">Logout</Typography>
