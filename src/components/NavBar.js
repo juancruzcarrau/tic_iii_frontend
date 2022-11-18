@@ -16,24 +16,29 @@ import '../App.css';
 import {Link, useNavigate} from "react-router-dom";
 import UserService from "../services/UserService";
 import {useForm} from "react-hook-form";
+import AddIcon from '@mui/icons-material/Add';
+
 import {
     Alert, CardMedia, CircularProgress,
     Collapse,
     Dialog,
     DialogContent,
     DialogTitle, Fade,
+    Input,
     Slide,
     TextField
 } from "@mui/material";
 import BoardService from "../services/BoardService";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RecentTableCard from "./RecentTableCard";
+import ImageService from "../services/ImageService";
+import DefautImage from "./DefautImage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const NavBar = ({tableCreated, estado}) => {
+const NavBar = ({tableCreated}) => {
 
     const styles = {
         buttonArea: {
@@ -46,13 +51,20 @@ const NavBar = ({tableCreated, estado}) => {
             display: "flex",
             justifyContent: "space-between",
             marginBottom: "10px",
-            marginTop: "10px",
+            marginTop: "15px",
         },
         fileUpload: {
             marginTop: "20px"
         },
         searchField: {
             color: "#BABFCB"
+        },
+        recent:{
+            width:"500px",
+            display:"flex",
+            flexDirection:"column",
+            justifyContent: "center",
+            alignItems:"center"
         }
     }
 
@@ -63,6 +75,21 @@ const NavBar = ({tableCreated, estado}) => {
     const navigate = useNavigate();
 
     const [errMsg, setErrMsg] = useState(false);
+
+    const [faltaImagen, setFaltaImagen] = useState(false);
+
+    const [defaultImages, setDefaultImages] = useState();
+
+    const [defaultImageSelected, setDefaultImageSelected] = useState(9999)
+
+    function setImage(image) {
+        setDefaultImageSelected(image);
+    }
+
+    useEffect(() => {
+        ImageService.get().then(res => {
+            setDefaultImages(res)})
+    },[])
 
     const [user, setUser] = useState(UserService.getCurrentUser);
 
@@ -83,8 +110,6 @@ const NavBar = ({tableCreated, estado}) => {
         else {
             setProfilePicture(avatar)
         }
-
-        console.log(profilePicture)
     }, [])
 
     function logout() {
@@ -104,6 +129,7 @@ const NavBar = ({tableCreated, estado}) => {
     const handleCreateDialogClose = () => {
         setOpenDialog(false);
         setErrMsg(false);
+        setDefaultImageSelected(9999);
         reset();
     };
 
@@ -149,23 +175,31 @@ const NavBar = ({tableCreated, estado}) => {
     };
 
     const handleCreate = (data) => {
-        const formData = new FormData()
-        formData.append('mailUsuario', user.email);
-        formData.append('nombre', data.nombre);
-        formData.append('id_imagen', 15);
-        formData.append('imagen', file);
+        if (defaultImageSelected === 9999 && file === null) {
+            setFaltaImagen(true)
+        }else {
+            const formData = new FormData()
+            formData.append('mailUsuario', user.email);
+            formData.append('nombre', data.nombre);
+            formData.append('id_imagen', defaultImageSelected);
+            formData.append('imagen', file);
 
-        BoardService.create(formData).then(() => {
-            tableCreated()
-            setOpenDialog(false);
-            setFile(null);
-            reset();
-        }).catch(error => {
-            if (error.request.status === 500){
-                setErrMsg(true);
-            }
-        });
+            BoardService.create(formData).then(() => {
+                tableCreated()
+                setOpenDialog(false);
+                setFile(null);
+                setDefaultImageSelected(9999)
+                setFaltaImagen(false)
+                reset();
+            }).catch(error => {
+                if (error.request.status === 500){
+                    setErrMsg(true);
+                }
+            });
+        }
+
     }
+
 
     const changeFile = (event) => {
         setFile(event.target.files[0]);
@@ -280,7 +314,7 @@ const NavBar = ({tableCreated, estado}) => {
                                     horizontal: 'left',
                                 }}
                             >
-                                <Box style={{width:"500px",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
+                                <Box style={styles.recent}>
                                     {recentTables ? recentTables.map((element) => {
                                         return <RecentTableCard key={element.id} table={element} click={handleCloseRecentreduce}/>
                                     }): <></>}
@@ -326,6 +360,7 @@ const NavBar = ({tableCreated, estado}) => {
                                 vertical: 'top',
                                 horizontal: 'center',
                             }}
+                            PaperProps={{sx:{borderRadius: "10px"}}}
                         >
                             <Box style={{ width: "270px",display:"flex", flexDirection:"column", justifyContent: "center", alignItems:"center"}}>
                                 {recentTables ? recentTables.map((element) => {
@@ -338,12 +373,15 @@ const NavBar = ({tableCreated, estado}) => {
                         </Button>
                     </Box>
 
-                    <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition}>
-                        <DialogTitle>Create Table</DialogTitle>
+                    <Dialog open={openDialog} onClose={handleCreateDialogClose} TransitionComponent={Transition} PaperProps={{sx:{borderRadius: "10px"}}}>
+                        <DialogTitle sx={{padding: "16px 24px 0px 24px"}}>Create Table</DialogTitle>
                         <Collapse in={errMsg}>
                             <Alert severity='error'>There was an unexpected error</Alert>
                         </Collapse>
-                        <DialogContent>
+                        <Collapse in={faltaImagen}>
+                            <Alert severity='error'>Select an image or upload one</Alert>
+                        </Collapse>
+                        <DialogContent sx={{padding: "5px 24px 20px 24px"}}>
                             <form noValidate autoComplete="off" onSubmit={handleSubmit(handleCreate)}>
                                 <TextField
                                     autoFocus
@@ -359,13 +397,21 @@ const NavBar = ({tableCreated, estado}) => {
                                     type="text"
                                     fullWidth
                                 />
-                                <input
-                                    className={styles.fileUpload}
-                                    onChange={(e) => changeFile(e)}
-                                    type="file"
-                                    accept="image/png, image/jpeg"
-                                    multiple={false}
-                                    />
+                                <Box sx={{ display: "flex", marginTop:"10px"}} >
+                                    {defaultImages && defaultImages.map((element) => {
+                                        return <DefautImage key={element.id} image={element} imageSelected={defaultImageSelected === element.id} functionSelection={(id) => setImage(id)} />
+                                    })}
+                                    <Box sx={{height: "80px", width:"130px", display: "flex",alignItems:"center", cursor:"pointer", justifyContent: "center", borderRadius: "10px",
+                                        '&:hover': {
+                                            backgroundColor: '#d8d8d8',
+                                            opacity: [0.7],
+                                        }}}>
+                                        <IconButton color="primary" aria-label="upload picture" component="label" sx={{height:"100%", width:"100%", borderRadius: "0px"}}>
+                                            <input hidden accept="image/*" type="file" onChange={(e) => changeFile(e)} />
+                                            <AddIcon />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
                                 <Box sx={styles.buttonCreate}>
                                     <Button variant="outlined" onClick={handleCreateDialogClose}>Cancel</Button>
                                     <Button variant="contained" type="submit">Create</Button>
@@ -401,6 +447,7 @@ const NavBar = ({tableCreated, estado}) => {
                             }}
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
+                            PaperProps={{sx:{borderRadius: "10px"}}}
                          >
                             <MenuItem onClick={profile}>
                                 <Typography textAlign="center">Profile</Typography>
