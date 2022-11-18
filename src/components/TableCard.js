@@ -83,7 +83,7 @@ const TableCard = ({tablero, tableChange}) => {
                     </Typography>
                 </Box>
                 <CardActions sx={style.buttonAction}>
-                    <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={favorito} onChange={handleFavoriteChange}/>
+                    <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={!tablero.archivado && favorito} onChange={handleFavoriteChange}/>
 
                     <IconButton
                         aria-label="more"
